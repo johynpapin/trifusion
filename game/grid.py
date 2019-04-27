@@ -1,4 +1,5 @@
 import pyglet
+from math import ceil
 from .utils import Position
 from . import resources
 
@@ -18,8 +19,8 @@ class Grid:
         return self.grid[position]
 
     def draw(self, batch, offset, size):
-        for x in range((size[0] - offset.x) // 70):
-            for y in range((size[1] - offset.y) // 70):
+        for x in range(ceil((size[0] - offset.x) / 70.0)):
+            for y in range(ceil((size[1] - offset.y) // 70.0)):
                 tile = self.get_tile(Position(x, y))
                 tile.draw(batch, offset, size)
 
