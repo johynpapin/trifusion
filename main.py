@@ -44,21 +44,21 @@ def on_draw():
     
     ui_tabs_y = window.get_size()[1] - 30
 
-    ui_header = pyglet.sprite.Sprite(resources.ui_header_image, x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
-    ui_footer = pyglet.sprite.Sprite(resources.ui_footer_image, x=0, y=resources.ui_footer_image.height, batch=main_batch, group=ui_background_group)
+    ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
+    ui_footer = pyglet.sprite.Sprite(resources.images['ui_footer'], x=0, y=resources.images['ui_footer'].height, batch=main_batch, group=ui_background_group)
 
     if ui_state['tab_entities_focus']:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.ui_tab_entities_focus_image, x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_focus'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
     elif ui_state['tab_entities_hover']:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.ui_tab_entities_hover_image, x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_hover'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
     else:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.ui_tab_entities_image, x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
 
-    ui_background_height = window.get_size()[1] - resources.ui_header_image.height - resources.ui_footer_image.height
+    ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height
 
     ui_background = []
     for y in range(ui_background_height):
-        ui_background.append(pyglet.sprite.Sprite(resources.ui_background_image, x=0, y=resources.ui_footer_image.height + y + 1, batch=main_batch, group=ui_background_group))
+        ui_background.append(pyglet.sprite.Sprite(resources.images['ui_background'], x=0, y=resources.images['ui_footer'].height + y + 1, batch=main_batch, group=ui_background_group))
 
     grid.draw(main_batch, background_group, entities_group, grid_offset, window.get_size(), entities)
 
