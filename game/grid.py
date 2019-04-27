@@ -1,5 +1,7 @@
 import pyglet
 from math import ceil
+from math import sqrt
+from random import randint
 from .utils import Position
 from . import resources
     
@@ -30,7 +32,7 @@ def accessible_neighbour(point, end):
     
     return l
 
-def lowest_list(openlist):
+def lowest_list(openlist,end):
     L = []
     LL = []
     for el in openlist:
@@ -46,7 +48,7 @@ def lowest_list(openlist):
     
     L = []
     for el in LL:
-        L.append(el.H)
+        L.append(sqrt((el.Position.x + end.x)**2 + (el.Position.y + end.y)**2))
 
     mini = min(L)
     
@@ -73,7 +75,7 @@ class Grid:
         self.zoom = 1.0
         self.sprites = []
 
-        # self.get_tile(Position(0, 0)).resource = True
+        self.get_tile(Position(0, 0)).resource = House()
 
     def is_empty(self, position):
         return position not in self.grid
@@ -88,25 +90,25 @@ class Grid:
         self.camera.x -= dx
         self.camera.y -= dy
 
-    def draw(self, batch, background_group, entities_group, offset, size, entities):
+    def draw(self, batch, background_group, resources_group, entities_group, offset, size, entities):
         camera_offset = Position(-self.camera.x % 70, self.camera.y % 70)
         zoom = self.zoom
 
         start_x = self.camera.x // (70 * zoom)
         start_y = self.camera.y // (70 * zoom)
         
-        size_x = ceil((size[0] - offset.x + camera_offset.x) / (70 * zoom))
+        size_x = ceil((size[0] - offset.x + camera_offset.x) / (70 * zoom)) + 1
         size_y = ceil((size[1] - offset.y + camera_offset.y) / (70 * zoom))
 
         for x in range(size_x):
             for y in range(size_y):
                 tile = self.get_tile(Position(start_x + x, start_y + y))
-                tile.draw(batch, background_group, Position(x * 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
+                tile.draw(batch, background_group, resources_group, Position(x * 70 * zoom - 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
 
         for entity in entities:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
-                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
+                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom - (70 * zoom), size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
     def find_path(self, start, end):
         if start == end:
@@ -114,8 +116,8 @@ class Grid:
         
         openlist = [Node(start, None, end)]
         forbiden = []
-        while [lowest_list(openlist).Position.x,lowest_list(openlist).Position.y] != [end.x,end.y]:
-            current = lowest_list(openlist)
+        while [lowest_list(openlist, end).Position.x, lowest_list(openlist, end).Position.y] != [end.x, end.y]:
+            current = lowest_list(openlist, end)
             oport = accessible_neighbour(current, end)
         
             for position_potential in oport:
@@ -130,14 +132,15 @@ class Grid:
             if oport == []:
                 forbiden.append(current.Position)
                 openlist.remove(current)
-                current = lowest_list(openlist)
+                current = lowest_list(openlist,end)
 
             if openlist == []:
                 return None
 
-            else:
+            if oport != []:
                 openlist.append(lowest(end, oport))
-        Path = [lowest_list(openlist)]
+
+        Path = [lowest_list(openlist,end)]
         
         while Path[-1].Father != None:
             Path.append(Path[-1].Father)
@@ -148,14 +151,13 @@ class Grid:
         n = len(Pathfonded)
         for i in range(n):
             Res.append(Pathfonded[n-1-i])
-        for i in range(n):
-            print(Res[i].x,Res[i].y)
         return Res
 
 class Tile:
     def __init__(self, position):
         self.resource = None
         self.position = position
+        self.grass_type = randint(0, 1)
 
     def is_obstacle(self):
         return False
@@ -163,11 +165,31 @@ class Tile:
     def has_resource(self):
         return self.resource is not None
 
-    def draw(self, batch, group, position, scale):
+    def draw(self, batch, background_group, resources_group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['grass' + str(self.grass_type)], batch=batch, group=background_group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = ceil(scale)
+
         if self.has_resource():
-            pass
-        else:
-            self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch, group=group)
-            self.sprite.x = position.x
-            self.sprite.y = position.y
-            self.sprite.scale = ceil(scale)
+            self.resource.draw(batch, resources_group, position, scale)
+
+class House:
+    def __init__(self):
+        pass
+
+    def draw(self, batch, group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['house'], batch=batch, group=group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = ceil(scale)
+
+class Forest:
+    def __init__(self):
+        self.forest_type = randint(0, 5)
+
+    def draw(self, batch, group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = ceil(scale)
