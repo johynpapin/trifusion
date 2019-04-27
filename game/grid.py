@@ -4,6 +4,7 @@ from math import sqrt
 from random import randint
 from .utils import Position
 from . import resources
+from random import random as rd
     
 def distance(A, B):
     return abs(A.x - B.x) + abs(A.y - B.y)
@@ -80,9 +81,53 @@ class Grid:
     def is_empty(self, position):
         return position not in self.grid
 
+    def state(self,position):
+        R=[0,0]
+        for i in range(-10,11,1):
+            for j in range(-10,11,1):
+                pos = Position(position.x + i, position.y + j)
+                if not self.is_empty(pos):
+                    if self.grid[pos].resource == Forest():
+                        R[0] += 1
+#                    if self.grid[pos].resource == Stone():
+#                        R[1] += 1
+        return R
+
+    def statebig(self,position):
+        R=[0,0]
+        for i in range(-50,51,1):
+            for j in range(-50,51,1):
+                pos = Position(position.x + i, position.y + j)
+                if not self.is_empty(pos):
+                    if self.grid[pos].resource == Forest():
+                        R[0] += 1
+#                    "if self.grid[pos].resource == Stone():
+#                        R[1] += 1"
+        return R
+
     def get_tile(self, position):
         if self.is_empty(position):
             self.grid[position] = Tile(position)
+            stat = self.state(position)
+            statb = self.statebig(position)
+            tree_close = stat[0]
+            tree_far = statb[0]
+            if tree_far == 0:
+                if rd() < 0.7:
+                    self.grid[position].resource == Forest()
+            elif tree_far <= 10 and tree_close <= 5:
+                if rd() < 0.1:
+                    self.grid[position].resource == Forest()
+            elif tree_far <= 10:
+                if rd() < 0.8:
+                    self.grid[position].resource == Forest()
+            elif tree_close >= 20:
+                if rd() < 0.15:
+                    self.grid[position].resource == Forest()
+            else:
+                if rd() < 0.4:
+                    self.grid[position].resource == Forest()
+
 
         return self.grid[position]
 
