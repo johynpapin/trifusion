@@ -16,14 +16,19 @@ window.set_visible()
 pyglet.resource.path = ['resources']
 pyglet.resource.reindex()
 
+pyglet.resource.add_font('04b_30.ttf')
+pyglet.resource.add_font('04b_03.ttf')
+
 grid_offset = Position(500, 0)
 grid = Grid()
 
-enchantments = []
+e0 = SimpleEnchantment("IA stupide")
+
+enchantments = [e0, e0, e0, e0, SimpleEnchantment("Olala olali olala")]
 entities = []
 spells = [MoveSpell, HarvestSpell]
 
-slime = SlimeEntity(grid, SimpleEnchantment("IA stupide"))
+slime = SlimeEntity(grid, e0)
 entities.append(slime)
 
 ui_state = {
@@ -34,11 +39,15 @@ ui_state = {
     'tab_spells_focus': False,
     'tab_spells_hover': False,
     'tab_settings_focus': False,
-    'tab_settings_hover': False
+    'tab_settings_hover': False,
+
+    'current_tab': 0,
 }
 
 @window.event
 def on_draw():
+    not_edible = []
+    
     window.clear()
     
     main_batch = pyglet.graphics.Batch()
@@ -48,7 +57,8 @@ def on_draw():
     entities_group = pyglet.graphics.OrderedGroup(2)
     ui_background_group = pyglet.graphics.OrderedGroup(3)
     ui_group = pyglet.graphics.OrderedGroup(4)
-    
+    ui_top_group = pyglet.graphics.OrderedGroup(5)
+
     ui_tabs_y = window.get_size()[1] - 30
 
     ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
@@ -88,6 +98,13 @@ def on_draw():
     for y in range(ui_background_height):
         ui_background.append(pyglet.sprite.Sprite(resources.images['ui_background'], x=0, y=resources.images['ui_footer'].height + y + 1, batch=main_batch, group=ui_background_group))
 
+    header_height = 125
+
+    if ui_state['current_tab'] == 1:
+        for i, enchantment in enumerate(enchantments):
+            not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_box'], x=50, y=window.get_size()[1] - (header_height + i * (resources.images['ui_enchantment_box'].height + 5)), batch=main_batch, group=ui_group))
+            not_edible.append(pyglet.text.Label(enchantment.name, font_name='04b_03b', font_size=18, x=not_edible[-1].x + 70, y=not_edible[-1].y - 15, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
     main_batch.draw()
@@ -125,6 +142,15 @@ def on_mouse_release(x, y, button, modifiers):
     mouse_position = Position(x, window.get_size()[1] - y)
     
     if button == pyglet.window.mouse.LEFT:
+        if ui_state['tab_entities_focus']:
+            ui_state['current_tab'] = 0
+        elif ui_state['tab_enchantments_focus']:
+            ui_state['current_tab'] = 1
+        elif ui_state['tab_spells_focus']:
+            ui_state['current_tab'] = 2
+        elif ui_state['tab_settings_focus']:
+            ui_state['current_tab'] = 3
+        
         ui_state['tab_entities_focus'] = False
         ui_state['tab_enchantments_focus'] = False
         ui_state['tab_spells_focus'] = False

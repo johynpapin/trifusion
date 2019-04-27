@@ -13,8 +13,6 @@ pyglet.resource.reindex()
 images = {}
 
 for file in files:
-    print(file)
-    images[file[:-4]] = pyglet.resource.image(file)
-    update_anchor(images[file[:-4]])
-
-print(images)
+    if file[-4:] == '.png':
+        images[file[:-4]] = pyglet.resource.image(file)
+        update_anchor(images[file[:-4]])
