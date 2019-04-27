@@ -18,10 +18,11 @@ class SlimeEntity(Entity):
     def __init__(self, grid, enchantment):
         super().__init__(grid, enchantment, 30)
 
-    def draw(self, batch, group, position):
+    def draw(self, batch, group, position, scale):
         self.sprite = pyglet.sprite.Sprite(img=resources.slime_front_left_image, batch=batch, group=group)
         self.sprite.x = position.x
         self.sprite.y = position.y
+        self.sprite.scale = scale
 
 class GoblinEntity(Entity):
     def __init__(self, sprite, enchantment, speed, mind, item, life_spawn, special):
