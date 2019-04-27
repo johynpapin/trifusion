@@ -45,6 +45,9 @@ class Grid:
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
+    def find_path(self, a, b):
+        return [a + Position(1, 0), b]
+
 
 class Tile:
     def __init__(self, position):

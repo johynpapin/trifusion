@@ -29,6 +29,10 @@ class MoveSpell(Spell):
         if len(path) == 1:
             return (True,)
 
+        state['next_move'] = entity.speed
+
+        return (False,)
+
 class HarvestSpell(Spell):
     def __init__(self):
         super().__init__()
