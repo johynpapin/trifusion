@@ -28,7 +28,13 @@ entities.append(slime)
 
 ui_state = {
     'tab_entities_focus': False,
-    'tab_entities_hover': False
+    'tab_entities_hover': False,
+    'tab_enchantments_focus': False,
+    'tab_enchantments_hover': False,
+    'tab_spells_focus': False,
+    'tab_spells_hover': False,
+    'tab_settings_focus': False,
+    'tab_settings_hover': False
 }
 
 @window.event
@@ -53,6 +59,27 @@ def on_draw():
         ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_hover'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
     else:
         ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    
+    if ui_state['tab_enchantments_focus']:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_focus'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_enchantments_hover']:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_hover'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    
+    if ui_state['tab_spells_focus']:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_focus'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_spells_hover']:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_hover'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    
+    if ui_state['tab_settings_focus']:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_focus'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_settings_hover']:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_hover'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
 
     ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height
 
@@ -71,16 +98,16 @@ def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
             grid.move_camera(dx, -dy)
 
 def is_position_in_rectangle(position, x, y, width, height):
-    return x <= position.x and x <= position.x + width and y <= position.y and position.y <= y + height
+    return x <= position.x and position.x <= x + width and y <= position.y and position.y <= y + height
 
 @window.event
 def on_mouse_motion(x, y, dx, dy):
     mouse_position = Position(x, window.get_size()[1] - y)
 
     ui_state['tab_entities_hover'] = is_position_in_rectangle(mouse_position, 32, 30, 106, 71)
-    ui_state['tab_entities1_hover'] = is_position_in_rectangle(mouse_position, 67, 30, 106, 71)
-    ui_state['tab_entities2_hover'] = is_position_in_rectangle(mouse_position, 102, 30, 106, 71)
-    ui_state['tab_entities3_hover'] = is_position_in_rectangle(mouse_position, 137, 30, 106, 71)
+    ui_state['tab_enchantments_hover'] = is_position_in_rectangle(mouse_position, 141, 30, 106, 71)
+    ui_state['tab_spells_hover'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
+    ui_state['tab_settings_hover'] = is_position_in_rectangle(mouse_position, 359, 30, 106, 71)
 
 @window.event
 def on_mouse_press(x, y, button, modifiers):
@@ -88,6 +115,9 @@ def on_mouse_press(x, y, button, modifiers):
     
     if button == pyglet.window.mouse.LEFT:
         ui_state['tab_entities_focus'] = is_position_in_rectangle(mouse_position, 32, 30, 106, 71)
+        ui_state['tab_enchantments_focus'] = is_position_in_rectangle(mouse_position, 141, 30, 106, 71)
+        ui_state['tab_spells_focus'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
+        ui_state['tab_settings_focus'] = is_position_in_rectangle(mouse_position, 359, 30, 106, 71)
 
 @window.event
 def on_mouse_release(x, y, button, modifiers):
@@ -95,6 +125,9 @@ def on_mouse_release(x, y, button, modifiers):
     
     if button == pyglet.window.mouse.LEFT:
         ui_state['tab_entities_focus'] = False
+        ui_state['tab_enchantments_focus'] = False
+        ui_state['tab_spells_focus'] = False
+        ui_state['tab_settings_focus'] = False
 
 scroll = 0
 
