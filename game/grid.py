@@ -7,6 +7,7 @@ class Grid:
     def __init__(self):
         self.grid = {}
         self.camera = Position(0, 0)
+        self.zoom = 1.0
         self.sprites = []
 
         # self.get_tile(Position(0, 0)).resource = True
@@ -26,22 +27,23 @@ class Grid:
 
     def draw(self, batch, background_group, entities_group, offset, size, entities):
         camera_offset = Position(-self.camera.x % 70, self.camera.y % 70)
+        zoom = self.zoom
+
+        start_x = self.camera.x // (70 * zoom)
+        start_y = self.camera.y // (70 * zoom)
         
-        start_x = self.camera.x // 70
-        start_y = self.camera.y // 70
-        
-        size_x = ceil((size[0] - offset.x + camera_offset.x) / 70.0)
-        size_y = ceil((size[1] - offset.y + camera_offset.y) / 70.0)
+        size_x = ceil((size[0] - offset.x + camera_offset.x) / (70 * zoom))
+        size_y = ceil((size[1] - offset.y + camera_offset.y) / (70 * zoom))
 
         for x in range(size_x):
             for y in range(size_y):
                 tile = self.get_tile(Position(start_x + x, start_y + y))
-                tile.draw(batch, background_group, Position(x * 70, size[1] - y * 70) + offset + camera_offset)
+                tile.draw(batch, background_group, Position(x * 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
 
         for entity in entities:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
-                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70, size[1] - (entity.position.y - start_y) * 70) + offset + camera_offset)
+                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
 
 class Tile:
@@ -55,10 +57,11 @@ class Tile:
     def has_resource(self):
         return self.resource is not None
 
-    def draw(self, batch, group, position):
+    def draw(self, batch, group, position, scale):
         if self.has_resource():
             pass
         else:
             self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch, group=group)
             self.sprite.x = position.x
             self.sprite.y = position.y
+            self.sprite.scale = ceil(scale)

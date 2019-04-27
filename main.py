@@ -44,6 +44,16 @@ def on_mouse_drag(x, y, dx, dy, buttons, modifiers):
         if x >= grid_offset.x and y >= grid_offset.y:
             grid.move_camera(dx, -dy)
 
+scroll = 0
+
+@window.event
+def on_mouse_scroll(x, y, scroll_x, scroll_y):
+    global scroll
+
+    scroll += scroll_y
+
+    grid.zoom = 1.1 ** scroll
+
 def update(dt):
     for entity in entities:
         entity.update(dt)
