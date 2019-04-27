@@ -44,6 +44,7 @@ def on_draw():
     main_batch = pyglet.graphics.Batch()
 
     background_group = pyglet.graphics.OrderedGroup(0)
+    resources_group = pyglet.graphics.OrderedGroup(1)
     entities_group = pyglet.graphics.OrderedGroup(2)
     ui_background_group = pyglet.graphics.OrderedGroup(3)
     ui_group = pyglet.graphics.OrderedGroup(4)
@@ -87,7 +88,7 @@ def on_draw():
     for y in range(ui_background_height):
         ui_background.append(pyglet.sprite.Sprite(resources.images['ui_background'], x=0, y=resources.images['ui_footer'].height + y + 1, batch=main_batch, group=ui_background_group))
 
-    grid.draw(main_batch, background_group, entities_group, grid_offset, window.get_size(), entities)
+    grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
     main_batch.draw()
 

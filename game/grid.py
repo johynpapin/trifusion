@@ -90,7 +90,7 @@ class Grid:
         self.camera.x -= dx
         self.camera.y -= dy
 
-    def draw(self, batch, background_group, resource_group, entities_group, offset, size, entities):
+    def draw(self, batch, background_group, resources_group, entities_group, offset, size, entities):
         camera_offset = Position(-self.camera.x % 70, self.camera.y % 70)
         zoom = self.zoom
 
@@ -103,7 +103,7 @@ class Grid:
         for x in range(size_x):
             for y in range(size_y):
                 tile = self.get_tile(Position(start_x + x, start_y + y))
-                tile.draw(batch, background_group, resource_group, Position(x * 70 * zoom - 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
+                tile.draw(batch, background_group, resources_group, Position(x * 70 * zoom - 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
 
         for entity in entities:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
@@ -165,14 +165,14 @@ class Tile:
     def has_resource(self):
         return self.resource is not None
 
-    def draw(self, batch, background_group, resource_group, position, scale):
-        self.sprite = pyglet.sprite.Sprite(img=resources.images['grass' + str(self.grass_type)], batch=batch, group=group)
+    def draw(self, batch, background_group, resources_group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['grass' + str(self.grass_type)], batch=batch, group=background_group)
         self.sprite.x = position.x
         self.sprite.y = position.y
         self.sprite.scale = ceil(scale)
 
         if self.has_resource():
-            self.resource.draw(batch, resource_group, position, scale)
+            self.resource.draw(batch, resources_group, position, scale)
 
 class House:
     def __init__(self):
@@ -180,6 +180,16 @@ class House:
 
     def draw(self, batch, group, position, scale):
         self.sprite = pyglet.sprite.Sprite(img=resources.images['house'], batch=batch, group=group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = ceil(scale)
+
+class Forest:
+    def __init__(self):
+        self.forest_type = randint(0, 5)
+
+    def draw(self, batch, group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
         self.sprite.x = position.x
         self.sprite.y = position.y
         self.sprite.scale = ceil(scale)
