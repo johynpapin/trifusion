@@ -1,5 +1,6 @@
 import pyglet
 from math import ceil
+from math import sqrt
 from .utils import Position
 from . import resources
     
@@ -30,7 +31,7 @@ def accessible_neighbour(point, end):
     
     return l
 
-def lowest_list(openlist):
+def lowest_list(openlist,end):
     L = []
     LL = []
     for el in openlist:
@@ -46,7 +47,7 @@ def lowest_list(openlist):
     
     L = []
     for el in LL:
-        L.append(el.H)
+        L.append(sqrt((el.Position.x + end.x)**2 + (el.Position.y + end.y)**2))
 
     mini = min(L)
     
@@ -114,8 +115,8 @@ class Grid:
         
         openlist = [Node(start, None, end)]
         forbiden = []
-        while [lowest_list(openlist).Position.x,lowest_list(openlist).Position.y] != [end.x,end.y]:
-            current = lowest_list(openlist)
+        while [lowest_list(openlist,end).Position.x,lowest_list(openlist,end).Position.y] != [end.x,end.y]:
+            current = lowest_list(openlist,end)
             oport = accessible_neighbour(current, end)
         
             for position_potential in oport:
@@ -130,14 +131,15 @@ class Grid:
             if oport == []:
                 forbiden.append(current.Position)
                 openlist.remove(current)
-                current = lowest_list(openlist)
+                current = lowest_list(openlist,end)
 
             if openlist == []:
                 return None
 
-            else:
+            if oport != []:
                 openlist.append(lowest(end, oport))
-        Path = [lowest_list(openlist)]
+
+        Path = [lowest_list(openlist,end)]
         
         while Path[-1].Father != None:
             Path.append(Path[-1].Father)
@@ -148,8 +150,6 @@ class Grid:
         n = len(Pathfonded)
         for i in range(n):
             Res.append(Pathfonded[n-1-i])
-        for i in range(n):
-            print(Res[i].x,Res[i].y)
         return Res
 
 class Tile:
