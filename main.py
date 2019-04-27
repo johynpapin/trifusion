@@ -14,7 +14,8 @@ level_label = pyglet.text.Label(text='Legend Of Wizard',
                                 x=200, y=200, anchor_x='center')
 
 enchantments = []
-
+minions = []
+spells = [move, arvest, wait]
 @window.event
 def on_draw():
     window.clear()

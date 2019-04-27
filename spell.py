@@ -14,3 +14,11 @@ class MoveSpell(Spell):
 class HarvestSpell(Spell):
     def __init__():
         super()
+        for i in range(4):
+            Wait
+        self.item = wood
+
+class WaitSpell(Spell):
+    def __init__():
+        super()
+        self.action = 1
