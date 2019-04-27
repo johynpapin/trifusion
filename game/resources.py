@@ -12,6 +12,15 @@ update_anchor(ui_header_image)
 ui_footer_image = pyglet.resource.image('ui_footer.png')
 update_anchor(ui_footer_image)
 
+ui_tab_entities_image = pyglet.resource.image('ui_tab_entities.png')
+update_anchor(ui_tab_entities_image)
+
+ui_tab_entities_hover_image = pyglet.resource.image('ui_tab_entities_hover.png')
+update_anchor(ui_tab_entities_hover_image)
+
+ui_tab_entities_focus_image = pyglet.resource.image('ui_tab_entities_focus.png')
+update_anchor(ui_tab_entities_focus_image)
+
 ui_background_image = pyglet.resource.image('ui_background.png')
 update_anchor(ui_background_image)
 

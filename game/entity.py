@@ -16,7 +16,7 @@ class Entity:
 
 class SlimeEntity(Entity):
     def __init__(self, grid, enchantment):
-        super().__init__(grid, enchantment, 30)
+        super().__init__(grid, enchantment, 5)
 
     def draw(self, batch, group, position, scale):
         self.sprite = pyglet.sprite.Sprite(img=resources.slime_front_left_image, batch=batch, group=group)
