@@ -81,7 +81,7 @@ def on_draw():
     else:
         ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
 
-    ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height
+    ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height + 38
 
     ui_background = []
     for y in range(ui_background_height):
