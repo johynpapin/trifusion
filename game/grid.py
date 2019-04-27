@@ -17,7 +17,10 @@ class Grid:
     def __init__(self):
         self.grid = {}
         self.camera = Position(0, 0)
+        self.zoom = 1.0
         self.sprites = []
+
+        # self.get_tile(Position(0, 0)).resource = True
 
     def is_empty(self, position):
         return position not in self.grid
@@ -28,11 +31,33 @@ class Grid:
 
         return self.grid[position]
 
-    def draw(self, batch, offset, size):
-        for x in range(ceil((size[0] - offset.x) / 70.0)):
-            for y in range(ceil((size[1] - offset.y) // 70.0)):
-                tile = self.get_tile(Position(x, y))
-                tile.draw(batch, offset, size)
+    def move_camera(self, dx, dy):
+        self.camera.x -= dx
+        self.camera.y -= dy
+
+    def draw(self, batch, background_group, entities_group, offset, size, entities):
+        camera_offset = Position(-self.camera.x % 70, self.camera.y % 70)
+        zoom = self.zoom
+
+        start_x = self.camera.x // (70 * zoom)
+        start_y = self.camera.y // (70 * zoom)
+        
+        size_x = ceil((size[0] - offset.x + camera_offset.x) / (70 * zoom))
+        size_y = ceil((size[1] - offset.y + camera_offset.y) / (70 * zoom))
+
+        for x in range(size_x):
+            for y in range(size_y):
+                tile = self.get_tile(Position(start_x + x, start_y + y))
+                tile.draw(batch, background_group, Position(x * 70 * zoom, size[1] - y * 70 * zoom) + offset + camera_offset, zoom)
+
+        for entity in entities:
+            if entity.position.x >= start_x and entity.position.y >= start_y and \
+                    entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
+                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
+
+    def find_path(self, a, b):
+        return [a + Position(1, 0), b]
+
 
     def distance(A,B):
         return(abs(A.x-B.x)+abs(A.y-B.y))
@@ -119,7 +144,11 @@ class Tile:
     def has_resource(self):
         return self.resource is not None
 
-    def draw(self, batch, offset, size):
-        self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch)
-        self.sprite.x = self.position.x * 70 + offset.x
-        self.sprite.y = size[1] - self.position.y * 70 + offset.y
+    def draw(self, batch, group, position, scale):
+        if self.has_resource():
+            pass
+        else:
+            self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch, group=group)
+            self.sprite.x = position.x
+            self.sprite.y = position.y
+            self.sprite.scale = ceil(scale)
