@@ -114,8 +114,7 @@ class Grid:
         
         openlist = [Node(start, None, end)]
         forbiden = []
-        
-        while lowest_list(openlist).Position != end or openlist != []:
+        while [lowest_list(openlist).Position.x,lowest_list(openlist).Position.y] != [end.x,end.y]:
             current = lowest_list(openlist)
             oport = accessible_neighbour(current, end)
         
@@ -132,24 +131,26 @@ class Grid:
                 forbiden.append(current.Position)
                 openlist.remove(current)
                 current = lowest_list(openlist)
+
+            if openlist == []:
+                return None
+
             else:
                 openlist.append(lowest(end, oport))
-        
-        if openlist == []:
-            return None
-        
         Path = [lowest_list(openlist)]
         
-        while Path[-1].Father.Position != start:
+        while Path[-1].Father != None:
             Path.append(Path[-1].Father)
-        
         Pathfonded = []
-        Path = Path.reverse()
-        
-        for el in Path:
+        for el in Path[:-1]:
             Pathfonded.append(el.Position)
-        
-        return Pathfonded
+        Res = []
+        n = len(Pathfonded)
+        for i in range(n):
+            Res.append(Pathfonded[n-1-i])
+        for i in range(n):
+            print(Res[i].x,Res[i].y)
+        return Res
 
 class Tile:
     def __init__(self, position):
