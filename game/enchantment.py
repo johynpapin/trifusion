@@ -8,11 +8,11 @@ class Enchantment:
         self.cost = 0
 
     def update_cost(self):
-        self.cost = sum(spell.get_cost() for spell in self.spells)
+        self.cost = sum(spell.cost for spell in self.spells)
 
-    def append_spell(self, index, *spells):
+    def append_spell(self, *spells):
         for spell in spells:
-            self.spells.insert(index, spell)
+            self.spells.append(spell)
         
         self.update_cost()
 
@@ -29,12 +29,12 @@ class Executor():
         self.current = None
         self.state = {}
 
-    def update():
+    def update(self):
         if self.current is None:
             self.current = 0
             self.state = {}
         
-        result = self.spells[self.current].update(self.entity, self.state)
+        result = self.enchantment.spells[self.current].update(self.entity, self.state)
 
         if result[0] == True:
             if len(result) > 1:

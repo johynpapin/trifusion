@@ -23,17 +23,19 @@ enchantments = []
 entities = []
 spells = [MoveSpell, HarvestSpell]
 
-slime = SlimeEntity(SimpleEnchantment("IA stupide"))
-spells.append(slime)
+slime = SlimeEntity(grid, SimpleEnchantment("IA stupide"))
+entities.append(slime)
 
 @window.event
 def on_draw():
     window.clear()
     
     main_batch = pyglet.graphics.Batch()
-    
-    grid.draw(main_batch, grid_offset, window.get_size())
-    
+    background_group = pyglet.graphics.OrderedGroup(0)
+    entities_group = pyglet.graphics.OrderedGroup(2)
+
+    grid.draw(main_batch, background_group, entities_group, grid_offset, window.get_size(), entities)
+
     main_batch.draw()
 
 @window.event

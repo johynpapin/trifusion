@@ -1,13 +1,10 @@
 class Spell:
     def __init__(self):
-        pass
-
-    def get_cost(self):
-        return self.cost
+        self.cost = 1
 
 class MoveSpell(Spell):
     def __init__(self, destination):
-        super()
+        super().__init__()
 
         self.destination = destination
 
@@ -34,7 +31,7 @@ class MoveSpell(Spell):
 
 class HarvestSpell(Spell):
     def __init__(self):
-        super()
+        super().__init__()
 
     def update(self, entity, state):
         if len(state) == 0:
@@ -42,7 +39,7 @@ class HarvestSpell(Spell):
 
 class WaitSpell(Spell):
     def __init__(self):
-        super()
+        super().__init__()
 
     def update(self, entity, state):
         if len(state) == 0:
