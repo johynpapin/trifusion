@@ -71,7 +71,7 @@ class Node:
 class Grid:
     def __init__(self):
         self.grid = {}
-        self.camera = Position(0, 0)
+        self.camera = Position(-140, -140)
         self.zoom = 1.0
         self.sprites = []
 
@@ -97,8 +97,8 @@ class Grid:
         start_x = self.camera.x // (70 * zoom)
         start_y = self.camera.y // (70 * zoom)
         
-        size_x = ceil((size[0] - offset.x + camera_offset.x) / (70 * zoom)) + 1
-        size_y = ceil((size[1] - offset.y + camera_offset.y) / (70 * zoom))
+        size_x = ceil((size[0] - offset.x) / (70 * zoom)) + 1
+        size_y = ceil((size[1] - offset.y) / (70 * zoom)) + 1
 
         for x in range(size_x):
             for y in range(size_y):
@@ -108,7 +108,7 @@ class Grid:
         for entity in entities:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
-                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom - (70 * zoom), size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
+                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
     def find_path(self, start, end):
         if start == end:
