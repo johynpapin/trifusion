@@ -40,6 +40,8 @@ class HarvestSpell(Spell):
     def update(self, entity, state):
         if len(state) == 0:
             pass
+        
+        return (False,)
 
 class WaitSpell(Spell):
     def __init__(self):
@@ -48,3 +50,5 @@ class WaitSpell(Spell):
     def update(self, entity, state):
         if len(state) == 0:
             pass
+
+        return (False,)

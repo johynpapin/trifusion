@@ -167,7 +167,7 @@ class Tile:
         if self.has_resource():
             pass
         else:
-            self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch, group=group)
+            self.sprite = pyglet.sprite.Sprite(img=resources.images['grass'], batch=batch, group=group)
             self.sprite.x = position.x
             self.sprite.y = position.y
             self.sprite.scale = ceil(scale)
