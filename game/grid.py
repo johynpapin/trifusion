@@ -115,8 +115,8 @@ class Grid:
         
         openlist = [Node(start, None, end)]
         forbiden = []
-        while [lowest_list(openlist,end).Position.x,lowest_list(openlist,end).Position.y] != [end.x,end.y]:
-            current = lowest_list(openlist,end)
+        while [lowest_list(openlist, end).Position.x, lowest_list(openlist, end).Position.y] != [end.x, end.y]:
+            current = lowest_list(openlist, end)
             oport = accessible_neighbour(current, end)
         
             for position_potential in oport:
