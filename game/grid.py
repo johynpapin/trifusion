@@ -17,11 +17,11 @@ class Grid:
 
         return self.grid[position]
 
-    def draw(self, batch, offset):
-        for x in range(10):
-            for y in range (10):
+    def draw(self, batch, offset, size):
+        for x in range((size[0] - offset.x) // 70):
+            for y in range((size[1] - offset.y) // 70):
                 tile = self.get_tile(Position(x, y))
-                tile.draw(batch, offset)
+                tile.draw(batch, offset, size)
 
 class Tile:
     def __init__(self, position):
@@ -31,7 +31,7 @@ class Tile:
     def has_resource(self):
         return self.resource is not None
 
-    def draw(self, batch, offset):
+    def draw(self, batch, offset, size):
         self.sprite = pyglet.sprite.Sprite(img=resources.grass_image, batch=batch)
         self.sprite.x = self.position.x * 70 + offset.x
-        self.sprite.y = self.position.y * 70 + offset.y
+        self.sprite.y = size[1] - self.position.y * 70 + offset.y

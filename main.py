@@ -8,7 +8,7 @@ from game.spell import MoveSpell, HarvestSpell
 from game.enchantment import SimpleEnchantment
 import game.resources as resources
 
-window = pyglet.window.Window(visible=False)
+window = pyglet.window.Window(visible=False, resizable=True)
 window.set_caption('Legend Of Wizard')
 window.set_visible()
 
@@ -28,7 +28,7 @@ def on_draw():
     
     main_batch = pyglet.graphics.Batch()
     
-    grid.draw(main_batch, Position(0, 0))
+    grid.draw(main_batch, Position(200, 0), window.get_size())
     
     main_batch.draw()
 
