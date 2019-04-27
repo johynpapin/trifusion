@@ -3,14 +3,9 @@ class Spell:
         self.cost = 1
 
 class MoveSpell(Spell):
-<<<<<<< HEAD
-    def __init__(destination):
-        super()
-=======
     def __init__(self, destination):
         super().__init__()
 
->>>>>>> 825a04f5f2ea567c19702dc097bef277732d5f50
         self.destination = destination
 
     def update(self, entity, state):
