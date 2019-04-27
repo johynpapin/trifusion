@@ -31,6 +31,9 @@ class Tile:
         self.resource = None
         self.position = position
 
+    def is_obstacle(self):
+        return False
+
     def has_resource(self):
         return self.resource is not None
 
