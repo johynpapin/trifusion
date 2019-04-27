@@ -71,7 +71,7 @@ class Node:
 class Grid:
     def __init__(self):
         self.grid = {}
-        self.camera = Position(0, 0)
+        self.camera = Position(-140, -140)
         self.zoom = 1.0
         self.sprites = []
 

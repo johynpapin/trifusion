@@ -41,7 +41,7 @@ class HarvestSpell(Spell):
         if len(state) == 0:
             pass
         
-        return (False,)
+        return (True,)
 
 class WaitSpell(Spell):
     def __init__(self):
