@@ -8,7 +8,6 @@ class Spell:
 class MoveSpell(Spell):
     def __init__(destination):
         super()
-
         self.destination = destination
 
 class HarvestSpell(Spell):

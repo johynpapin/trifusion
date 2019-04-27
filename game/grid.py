@@ -24,6 +24,8 @@ class Grid:
                 tile = self.get_tile(Position(x, y))
                 tile.draw(batch, offset, size)
 
+    def find_path(start,end):
+        
 class Tile:
     def __init__(self, position):
         self.resource = None
