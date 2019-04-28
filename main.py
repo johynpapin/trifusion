@@ -40,8 +40,9 @@ slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
 def on_click_buy():
-    state.wood_count -= 20
-    entities.append(SlimeEntity(grid, e0, state))
+    if state.wood_count >= 20:
+        state.wood_count -= 20
+        entities.append(SlimeEntity(grid, e0, state))
 
 buttons = set()
 
