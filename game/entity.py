@@ -4,9 +4,10 @@ from .enchantment import Executor
 from .utils import Position
 
 class Entity:
-    def __init__(self, grid, enchantment, speed):
+    def __init__(self, grid, enchantment, state, speed):
         self.grid = grid
         self.enchantment = enchantment
+        self.state = state
         self.speed = speed
         self.position = Position(0, 0)
         self.executor = Executor(self, enchantment)
@@ -15,8 +16,8 @@ class Entity:
         self.executor.update()
 
 class SlimeEntity(Entity):
-    def __init__(self, grid, enchantment):
-        super().__init__(grid, enchantment, 1)
+    def __init__(self, grid, enchantment, state):
+        super().__init__(grid, enchantment, state, 1)
 
     def draw(self, batch, group, position, scale):
         self.sprite = pyglet.sprite.Sprite(img=resources.images['slime_front_left'], batch=batch, group=group)

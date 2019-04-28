@@ -19,6 +19,15 @@ pyglet.resource.reindex()
 pyglet.resource.add_font('04b_30.ttf')
 pyglet.resource.add_font('04b_03.ttf')
 
+class GameState:
+    def __init__(self):
+        self.enchantment_boxes = []
+        self.spell_boxes = []
+
+        self.wood_count = 0
+
+state = GameState()
+
 grid_offset = Position(500, 0)
 grid = Grid()
 
@@ -30,7 +39,7 @@ spells = [MoveSpell, HarvestSpell]
 
 listeners = {}
 
-slime = SlimeEntity(grid, e0)
+slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
 ui_state = {
@@ -51,13 +60,6 @@ ui_state = {
     'current_enchantment': None,
     'spells_order': []
 }
-
-class GameState:
-    def __init__(self):
-        self.enchantment_boxes = []
-        self.spell_boxes = []
-
-state = GameState()
 
 @window.event
 def on_draw():
