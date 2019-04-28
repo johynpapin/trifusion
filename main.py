@@ -24,7 +24,7 @@ grid = Grid()
 
 e0 = SimpleEnchantment("IA stupide")
 
-enchantments = [e0, e0, e0, e0, SimpleEnchantment("Olala olali olala")]
+enchantments = [e0]
 entities = []
 spells = [MoveSpell, HarvestSpell]
 
@@ -40,7 +40,8 @@ slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
 def on_click_buy():
-    pass
+    state.wood_count -= 20
+    entities.append(SlimeEntity(grid, e0, state))
 
 buttons = set()
 
