@@ -184,6 +184,25 @@ class Grid:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
     def find_path(self, start, end):
+        L=[]
+        current = start
+        while current.x != end.x and current.y != end.y:
+            if current.x < end.x:
+                current = Position(current.x + 1, current.y)
+                L.append(current)
+            if current.x > end.x:
+                current = Position(current.x - 1, current.y)
+                L.append(current)
+            if current.y < end.y:
+                current = Position(current.x + 1, current.y)
+                L.append(current)
+            if current.y > end.y:
+                current = Position(current.x - 1, current.y)
+                L.append(current)
+        return L
+
+
+    def find_path2(self, start, end):
         if start == end:
             return []
         
