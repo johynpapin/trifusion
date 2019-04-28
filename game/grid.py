@@ -9,6 +9,9 @@ from random import random as rd
 def distance(A, B):
     return abs(A.x - B.x) + abs(A.y - B.y)
 
+def distance_ecl(A, B):
+    return sqrt((A.x - B.x)**2 + (A.y + B.y)**2)
+
 def lowest(end, Potential):
     tst = Potential[0]
     mini = [tst, distance(tst.Position, end)]
@@ -38,7 +41,7 @@ def lowest_list(openlist,end):
     LL = []
 
     for el in openlist:
-        L.append(el.G)
+        L.append(el.G + el.H)
     
     mini = min(L)
     i = 0
@@ -51,7 +54,7 @@ def lowest_list(openlist,end):
     L = []
 
     for el in LL:
-        L.append(el.H)
+        L.append(distance)
 
     mini = min(L)
     i=0
@@ -67,8 +70,6 @@ class Node:
         self.Father = Father
         if Father == None:
             self.G = 0
-        elif isinstance(Position, Road):
-            self.G = Father.G + 0.5
         else:
             self.G = Father.G + 1
         self.H = distance(self.Position,end)
@@ -182,8 +183,31 @@ class Grid:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
-
+    
     def find_path(self, start, end):
+        i = 0
+        L=[]
+        pos = start
+        while pos != end:
+            if i == 1:
+                i = 0
+                if pos.y < end.y:
+                    pos = Position(pos.x, pos.y + 1)
+                    L.append(pos)
+                elif pos.y > end.y:
+                    pos = Position(pos.x, pos.y - 1)
+                    L.append(pos)
+            else:
+                i = 1
+                if pos.x < end.x:
+                    pos = Position(pos.x + 1, pos.y)
+                    L.append(pos)
+                elif pos.x > end.x:
+                    pos = Position(pos.x - 1, pos.y)
+                    L.append(pos)
+        return L
+
+    def find_path2(self, start, end):
         if start == end:
             return []
         
