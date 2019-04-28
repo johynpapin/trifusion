@@ -86,7 +86,6 @@ def on_draw():
     ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
     ui_footer = pyglet.sprite.Sprite(resources.images['ui_footer'], x=0, y=resources.images['ui_footer'].height, batch=main_batch, group=ui_background_group)
 
-
     if ui_state['tab_entities_focus']:
         ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_focus'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
     elif ui_state['tab_entities_hover']:
@@ -114,8 +113,6 @@ def on_draw():
         ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_hover'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
     else:
         ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
-
-
 
     ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height + 38
 
@@ -267,8 +264,16 @@ def generate_enchantments():
                     ui_state['spells_order'].append(j)
 
                 def on_click_retour():
+                    spells = enchantments[ui_state['current_enchantment']].spells.copy()
+                    
+                    for position, spell_index in enumerate(ui_state['spells_order']):
+                        spells[position] = enchantments[ui_state['current_enchantment']].spells[spell_index]
+
+                    enchantments[ui_state['current_enchantment']].spells = spells
+
                     ui_state['current_enchantment'] = None
                     ui_state['return_button'] = None
+
                     state.spell_boxes = []
                     generate_enchantments()
 
@@ -326,8 +331,12 @@ def on_mouse_scroll(x, y, scroll_x, scroll_y):
     grid.zoom = 1.1 ** scroll
 
 def update(dt):
+    global entities
+
     for entity in entities:
         entity.update(dt)
+
+    entities = list(filter(lambda entity: not entity.dead, entities))
 
 pyglet.clock.schedule_interval(update, 1/10)
 

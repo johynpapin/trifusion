@@ -29,16 +29,11 @@ class MoveSpell(Spell):
                 not entity.grid.get_tile(state['resource_position']).has_resource() or \
                 not isinstance(entity.grid.get_tile(state['resource_position']).resource, self.destination):
         
-
-                print('finding a resource')
-
                 state['resource_position'] = entity.grid.found_resource(entity.position, self.destination)
 
                 if state['resource_position'] is None:
                     return (False,)
             
-            print('computing path')
-
             path = entity.grid.find_path(entity.position, state['resource_position'])
 
         if path is None:
@@ -47,12 +42,9 @@ class MoveSpell(Spell):
         if len(path) == 0:
             return (True,)
 
-        print('moving')
-
         entity.position = path[0]
 
         if len(path) == 1:
-            print('time to harvest')
             return (True,)
 
         state['next_move'] = entity.speed
@@ -71,7 +63,7 @@ class HarvestSpell(Spell):
 
         if isinstance(entity.grid.get_tile(entity.position).resource, Forest):
             entity.grid.get_tile(entity.position).resource = None
-            entity.state.wood_count += 5
+            entity.wood_count += 5
 
         return (True,)
 
@@ -85,3 +77,12 @@ class WaitSpell(Spell):
 
         return (False,)
 
+class DropSpell(Spell):
+    def __init__(self):
+        super().__init__()
+
+    def update(self, entity, state):
+        entity.state.wood_count += entity.wood_count
+        entity.wood_count = 0
+
+        return (True,)
