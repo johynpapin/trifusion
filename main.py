@@ -134,9 +134,9 @@ def on_draw():
             enchantment = enchantments[ui_state['current_enchantment']]
 
             if ui_state['return_focus']:
-                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_focus'], x=50, y=50, batch=main_batch, group=ui_group)
+                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_focus'], x=50, y=75, batch=main_batch, group=ui_group)
             elif ui_state['return_hover']:
-                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_hover'], x=50, y=50, batch=main_batch, group=ui_group)
+                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_hover'], x=50, y=75, batch=main_batch, group=ui_group)
             else:
                 ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour'], x=50, y=75, batch=main_batch, group=ui_group)
 
@@ -208,6 +208,8 @@ def on_mouse_motion(x, y, dx, dy):
     ui_state['tab_spells_hover'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
     ui_state['tab_settings_hover'] = is_position_in_rectangle(mouse_position, 359, 30, 106, 71)
 
+    ui_state['return_hover'] = is_position_in_rectangle(mouse_position, 50, 500, 65, 40)
+
     for button in buttons.copy():
         button.hover = is_position_in_rectangle(mouse_position, button.last_position.x, button.last_position.y, button.image.width, button.image.height)
 
@@ -220,6 +222,8 @@ def on_mouse_press(x, y, button, modifiers):
         ui_state['tab_enchantments_focus'] = is_position_in_rectangle(mouse_position, 141, 30, 106, 71)
         ui_state['tab_spells_focus'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
         ui_state['tab_settings_focus'] = is_position_in_rectangle(mouse_position, 359, 30, 106, 71)
+
+        ui_state['return_focus'] = is_position_in_rectangle(mouse_position, 50, 500, 65, 40)
 
         for button in buttons.copy():
             button.focus = is_position_in_rectangle(mouse_position, button.last_position.x, button.last_position.y, button.image.width, button.image.height)
