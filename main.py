@@ -192,7 +192,7 @@ def on_draw():
                 modal_y = window.get_size()[1] // 2 - resources.images['fenetre'].height // 2
                 not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=modal_x, y=window.get_size()[1] - modal_y, batch=main_batch, group=ui_new_window_group))
                 ui_state['quit_button'].draw(main_batch, ui_on_window_group, Position(modal_x + 550, window.get_size()[1] - modal_y - 30))
-                
+
                 for i, button in enumerate(ui_state['spell_buttons']):
                     button.draw(main_batch, ui_on_window_group, Position(modal_x + 100, window.get_size()[1] - modal_y - 30 - (button.image.height + 5) * i))
                     position = Position(modal_x + 100, window.get_size()[1] - modal_y - 30 - (button.image.height + 5) * i)
@@ -330,13 +330,13 @@ def generate_enchantments():
                                 e = enchantments[ui_state['current_enchantment']]
                                 index = len(e.spells)
                                 e.spells.append(spell())
-                                
-                                
+
+
                                 state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
                                 state.spell_boxes[-1].index = index
                                 state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(index, ui_state['current_enchantment'])
                                 ui_state['spells_order'].append(index)
-                                
+
                                 ui_state['window'] = False
                                 ui_state['spell_buttons'] = []
 
@@ -367,7 +367,7 @@ def on_mouse_release(x, y, button, modifiers):
     if button == pyglet.window.mouse.LEFT:
         if ui_state['tab_entities_focus']:
             ui_state['buy_button_slime'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime)
-            ui_state['buy_button_goblin'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_goblin)
+            ui_state['buy_button_goblin'] = Button('acheter_goblin', 'acheter_slime_goblin', 'acheter_slime_goblin', on_click_buy_goblin)
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
             generate_enchantments()
