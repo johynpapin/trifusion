@@ -194,7 +194,7 @@ class Grid:
     def find_path(self, start, end):
         L = []
         current = start
-        while end != start:
+        while end != current:
             oport = acces(start, end)
             current=lowest(end, oport)
             L.append(current)
