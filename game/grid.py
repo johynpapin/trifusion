@@ -114,7 +114,8 @@ class Grid:
         return self.grid[position]
 
     def is_road(self, position):
-        self.get_tile(position).resource = Road()
+#        self.get_tile(position).resource = Road()
+        return False
     def found_resource(self, position, resource):
         i=1
         while true:

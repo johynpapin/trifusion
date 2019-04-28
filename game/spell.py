@@ -1,4 +1,3 @@
-from .grid import Road
 class Spell:
     def __init__(self):
         self.cost = 1
@@ -13,8 +12,6 @@ class MoveSpell(Spell):
         if len(state) == 0:
             state['next_move'] = entity.speed
             position = entity.position
-            if isinstance(entity.grid.grid[position].resource, Road):
-                state['next_move'] = entity.speed*2
 
         if state['next_move'] != 0:
             state['next_move'] -= 1
