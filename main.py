@@ -39,7 +39,6 @@ state = GameState()
 slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
-
 goblin = GoblinEntity(grid, e0, state)
 entities.append(goblin)
 
