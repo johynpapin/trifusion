@@ -21,11 +21,6 @@ pyglet.resource.add_font('04b_03.ttf')
 
 grid_offset = Position(500, 0)
 grid = Grid()
-for i in range(10):
-    Pos = Position(-1,i)
-    grid.is_road(Pos)
-    Pos = Position(i,11)
-    grid.is_road(Pos)
 
 e0 = SimpleEnchantment("IA stupide")
 
@@ -36,7 +31,7 @@ spells = [MoveSpell, HarvestSpell]
 listeners = {}
 
 slime = SlimeEntity(grid, e0)
-entities.append(slime)
+#entities.append(slime)
 
 ui_state = {
     'tab_entities_focus': False,
@@ -133,6 +128,7 @@ def on_draw():
             for j, i in enumerate(ui_state['spells_order']):
                 spell = enchantment.spells[i]
                 button = state.spell_boxes[i]
+                print('{} is at position {} and the button index is {}'.format(i, j, button.index))
                 position = Position(50, window.get_size()[1] - (header_height + j * (resources.images['ui_spell_box'].height + 5)))
                 button.draw(main_batch, ui_group, position)
                 not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
@@ -150,7 +146,7 @@ def on_mouse_drag(x, y, dx, dy, ebuttons, modifiers):
         else:
             for button in buttons.copy():
                 if button.draggable and button.focus:
-                    button.on_drag(x, y, dx, dy)
+                    button.on_drag(button, x, y, dx, dy)
 
 def is_position_in_rectangle(position, x, y, width, height):
     return x <= position.x and position.x <= x + width and y <= position.y and position.y <= y + height
@@ -231,22 +227,17 @@ def on_mouse_release(x, y, button, modifiers):
                             return on_click
 
                         def generate_on_drag_still_for_spell(spell_index, enchantment_index):
-                            current_spell_box = state.spell_boxes[spell_index]
-
-                            def on_drag(x, y, dx, dy):
+                            def on_drag(current_spell_box, x, y, dx, dy):
                                 for j, spell_box in enumerate(state.spell_boxes):
                                     mouse_position = Position(x, window.get_size()[1] - y)
  
-                                    if spell_box.index < current_spell_box.index and \
+                                    if spell_box.index != current_spell_box.index and \
                                         is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
                                        
                                         print('swaping {} with {}'.format(spell_box.index, current_spell_box.index))
 
-                                        ui_state['spells_order'][current_spell_box.index] = spell_box.index
-                                        ui_state['spells_order'][spell_box.index] = current_spell_box.index
+                                        ui_state['spells_order'][current_spell_box.index], ui_state['spells_order'][spell_box.index] = ui_state['spells_order'][spell_box.index], ui_state['spells_order'][current_spell_box.index]
 
-                                        spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
-                                        
                                         print(len(enchantment.spells), len(state.spell_boxes))
                                         return
 

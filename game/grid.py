@@ -265,3 +265,10 @@ class Forest:
         self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
         self.sprite.x = position.x
         self.sprite.y = position.y
+
+class Road:
+    def __init__(self):
+        pass
+
+    def draw(self, batch, group, position, scale):
+        pass
