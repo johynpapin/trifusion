@@ -45,6 +45,8 @@ ui_state = {
 
     'return_button': None,
 
+    'add_button': None,
+
     'current_tab': 0,
     'current_enchantment': None,
     'spells_order': []
@@ -129,7 +131,9 @@ def on_draw():
 
             ui_state['return_button'].draw(main_batch, ui_top_group, Position(29, window.get_size()[1] - header_height + 23))
 
-            not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 23, batch=main_batch, group=ui_group))
+            ui_state['add_button'].draw(main_batch, ui_top_group, Position(360, 125))
+
+            not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
 
             for j, i in enumerate(ui_state['spells_order']):
@@ -197,8 +201,6 @@ def on_mouse_motion(x, y, dx, dy):
     ui_state['tab_spells_hover'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
     ui_state['tab_settings_hover'] = is_position_in_rectangle(mouse_position, 359, 30, 106, 71)
 
-    ui_state['return_hover'] = is_position_in_rectangle(mouse_position, 50, 500, 65, 40)
-
     for button in buttons.copy():
         button.hover = is_position_in_rectangle(mouse_position, button.last_position.x, button.last_position.y, button.image.width, button.image.height)
 
@@ -250,7 +252,7 @@ def generate_enchantments():
                     state.spell_boxes[-1].index = j
                     state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
                     ui_state['spells_order'].append(j)
-                
+
                 def on_click_retour():
                     ui_state['current_enchantment'] = None
                     ui_state['return_button'] = None
@@ -258,7 +260,9 @@ def generate_enchantments():
                     generate_enchantments()
 
                 ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
-                
+
+                ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_retour)
+
                 ui_state['current_enchantment'] = i
 
             return on_click
