@@ -35,8 +35,8 @@ spells = [MoveSpell, HarvestSpell]
 
 listeners = {}
 
-#slime = SlimeEntity(grid, e0)
-#entities.append(slime)
+slime = SlimeEntity(grid, e0)
+entities.append(slime)
 
 ui_state = {
     'tab_entities_focus': False,
