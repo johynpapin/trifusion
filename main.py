@@ -30,13 +30,8 @@ spells = [MoveSpell, HarvestSpell]
 
 listeners = {}
 
-<<<<<<< HEAD
 slime = SlimeEntity(grid, e0)
 #entities.append(slime)
-=======
-# slime = SlimeEntity(grid, e0)
-# entities.append(slime)
->>>>>>> 3ef4f393bd6de15a613f9e2b65ab83290a6bc002
 
 ui_state = {
     'tab_entities_focus': False,
@@ -252,24 +247,15 @@ def on_mouse_release(x, y, button, modifiers):
                             def on_drag(current_spell_box, x, y, dx, dy):
                                 for j, spell_box in enumerate(state.spell_boxes):
                                     mouse_position = Position(x, window.get_size()[1] - y)
-<<<<<<< HEAD
  
                                     if spell_box.index != current_spell_box.index and \
-=======
-
-                                    if spell_box.index < current_spell_box.index and \
->>>>>>> 3ef4f393bd6de15a613f9e2b65ab83290a6bc002
                                         is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
 
                                         print('swaping {} with {}'.format(spell_box.index, current_spell_box.index))
 
                                         ui_state['spells_order'][current_spell_box.index], ui_state['spells_order'][spell_box.index] = ui_state['spells_order'][spell_box.index], ui_state['spells_order'][current_spell_box.index]
 
-<<<<<<< HEAD
-=======
                                         spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
-
->>>>>>> 3ef4f393bd6de15a613f9e2b65ab83290a6bc002
                                         print(len(enchantment.spells), len(state.spell_boxes))
                                         return
 
