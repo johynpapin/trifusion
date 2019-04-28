@@ -27,8 +27,8 @@ def lowest(end, Potential):
 
 def accessible_neighbour(point, end):
     l = []
-    x = point.Position.x
-    y = point.Position.y
+    x = point.x
+    y = point.y
 
     for el in [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]:
         #if not is_obstacle(el):
@@ -198,7 +198,7 @@ class Grid:
         forbiden = []
         while [lowest_list(openlist, end).Position.x, lowest_list(openlist, end).Position.y] != [end.x, end.y]:
             current = lowest_list(openlist, end)
-            oport = accessible_neighbour(current, end)
+            oport = accessible_neighbour(current.Position, end)
 
             for position_potential in oport:
                 if position_potential.Position in forbiden:
