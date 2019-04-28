@@ -18,7 +18,7 @@ class MoveSpell(Spell):
             return (False,)
 
         path = entity.grid.find_path(entity.position, self.destination)
-        
+ 
         if path is None:
             return (False,)
 
@@ -43,7 +43,7 @@ class HarvestSpell(Spell):
     def update(self, entity, state):
         if len(state) == 0:
             pass
-        
+
         return (True,)
 
 class WaitSpell(Spell):
