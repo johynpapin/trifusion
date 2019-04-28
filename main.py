@@ -73,7 +73,7 @@ class Button():
 
         self.last_position = Position(0, 0)
 
-    def draw(self, batch, group, position):
+    def draw(self, batch, group, position, top_group=None):
         self.last_position = Position(position.x, window.get_size()[1] - position.y)
 
         if self.focus:
@@ -82,6 +82,35 @@ class Button():
             self.sprite = pyglet.sprite.Sprite(self.hover_image, x=position.x, y=position.y, batch=batch, group=group)
         else:
             self.sprite = pyglet.sprite.Sprite(self.image, x=position.x, y=position.y, batch=batch, group=group)
+
+class MoveSpellButton(Button):
+    def __init__(self, spell):
+        super().__init__('ui_spell_box_move', 'ui_spell_box_move', 'ui_spell_box_move', self.on_click, True)
+        self.mode = True
+        self.spell = spell
+
+    def set_resource_mode(self, mode):
+        self.mode = mode
+
+        if mode:
+            self.image = resources.images['ui_spell_box_move_resource']
+        else:
+            self.image = resources.images['ui_spell_box_move']
+
+        self.hover_image = self.image
+        self.focus_image = self.focus_image
+
+    def draw(self, batch, group, position, top_group):
+        super().draw(batch, group, position)
+
+        if self.mode:
+            self.wood_sprite = pyglet.sprite.Sprite(resources.images['bois'], x=self.last_position.x + 200, y=window.get_size()[1] - self.last_position.y - 70, group=top_group, batch=batch)
+        else:
+            self.x_label = pyglet.text.Label(str(self.spell.destination.x), font_name='04b_03b', font_size=20, x=self.last_position.x + 183, y=window.get_size()[1] - self.last_position.y - 21, batch=batch, group=top_group, anchor_y='top', anchor_x='left')
+            self.y_label = pyglet.text.Label(str(self.spell.destination.y), font_name='04b_03b', font_size=20, x=self.last_position.x + 183, y=window.get_size()[1] - self.last_position.y - 53, batch=batch, group=top_group, anchor_y='top', anchor_x='left')
+
+    def on_click(self):
+        print(self.mode)
 
 ui_state = {
     'tab_entities_focus': False,
@@ -205,7 +234,7 @@ def on_draw():
                 spell = enchantment.spells[i]
                 button = state.spell_boxes[i]
                 position = Position(50, window.get_size()[1] - (header_height + 30 + j * (resources.images['ui_spell_box'].height + 5)))
-                button.draw(main_batch, ui_group, position)
+                button.draw(main_batch, ui_group, position, ui_top_group)
                 not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
                 not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
 
@@ -302,7 +331,12 @@ def generate_enchantments():
                 ui_state['spells_order'] = []
 
                 for j, spell in enumerate(enchantments[i].spells):
-                    state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
+                    if isinstance(spell, MoveSpell):
+                        state.spell_boxes.append(MoveSpellButton(spell)) 
+                        state.spell_boxes[-1].set_resource_mode(not isinstance(spell.destination, Position))
+                    else:
+                        state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
+
                     state.spell_boxes[-1].index = j
                     state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
                     ui_state['spells_order'].append(j)
@@ -332,7 +366,12 @@ def generate_enchantments():
                                 e.spells.append(spell())
                                 
                                 
-                                state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
+                                if isinstance(spell, MoveSpell):
+                                    state.spell_boxes.append(MoveSpellButton(spell))
+                                    state.spell_boxes[-1].set_resource_mode(not isinstance(spell.destination, Position))
+                                else:
+                                    state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
+                                
                                 state.spell_boxes[-1].index = index
                                 state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(index, ui_state['current_enchantment'])
                                 ui_state['spells_order'].append(index)
