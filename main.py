@@ -191,6 +191,10 @@ def on_draw():
     if ui_state['current_tab'] == 0:
         not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
         not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_slime'], x=170, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(entities)), font_name='04b_03b', font_size=12, x=215, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
         ui_state['buy_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
@@ -275,7 +279,7 @@ def generate_enchantments():
 
                 def on_click_retour():
                     spells = enchantments[ui_state['current_enchantment']].spells.copy()
-                    
+
                     for position, spell_index in enumerate(ui_state['spells_order']):
                         spells[position] = enchantments[ui_state['current_enchantment']].spells[spell_index]
 
