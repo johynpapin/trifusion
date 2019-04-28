@@ -101,7 +101,9 @@ ui_state = {
 
     'current_tab': 0,
     'current_enchantment': None,
-    'spells_order': []
+    'spells_order': [],
+
+    'spell_buttons': []
 }
 
 @window.event
@@ -120,8 +122,9 @@ def on_draw():
     ui_background_group = pyglet.graphics.OrderedGroup(3)
     ui_group = pyglet.graphics.OrderedGroup(4)
     ui_top_group = pyglet.graphics.OrderedGroup(5)
-    ui_new_window = pyglet.graphics.OrderedGroup(6)
-    ui_on_window = pyglet.graphics.OrderedGroup(7)
+    ui_new_window_group = pyglet.graphics.OrderedGroup(6)
+    ui_on_window_group = pyglet.graphics.OrderedGroup(7)
+    ui_on_on_window_group = pyglet.graphics.OrderedGroup(8)
 
     ui_tabs_y = window.get_size()[1] - 30
 
@@ -180,8 +183,13 @@ def on_draw():
             if ui_state['window'] :
                 modal_x = window.get_size()[0] // 2 - resources.images['fenetre'].width // 2
                 modal_y = window.get_size()[1] // 2 - resources.images['fenetre'].height // 2
-                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=modal_x, y=window.get_size()[1] - modal_y, batch=main_batch, group=ui_new_window))
-                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(modal_x + 550, window.get_size()[1] - modal_y - 30))
+                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=modal_x, y=window.get_size()[1] - modal_y, batch=main_batch, group=ui_new_window_group))
+                ui_state['quit_button'].draw(main_batch, ui_on_window_group, Position(modal_x + 550, window.get_size()[1] - modal_y - 30))
+                
+                for i, button in enumerate(ui_state['spell_buttons']):
+                    button.draw(main_batch, ui_on_window_group, Position(modal_x + 100, window.get_size()[1] - modal_y - 30 - (button.image.height + 5) * i))
+                    position = Position(modal_x + 100, window.get_size()[1] - modal_y - 30 - (button.image.height + 5) * i)
+                    not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + spells[i].__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_on_on_window_group))
 
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
@@ -303,12 +311,33 @@ def generate_enchantments():
                 ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
 
                 def on_click_add():
+                    for spell in spells:
+                        def generate_on_click(spell):
+                            def on_click():
+                                e = enchantments[ui_state['current_enchantment']]
+                                index = len(e.spells)
+                                e.spells.append(spell())
+                                
+                                
+                                state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
+                                state.spell_boxes[-1].index = index
+                                state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(index, ui_state['current_enchantment'])
+                                ui_state['spells_order'].append(index)
+                                
+                                ui_state['window'] = False
+                                ui_state['spell_buttons'] = []
+
+                            return on_click
+
+                        ui_state['spell_buttons'].append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click(spell)))
+
                     ui_state['window'] = True
 
                 ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_add)
 
                 def on_click_quit():
                     ui_state['window'] = False
+                    ui_state['spell_buttons'] = []
 
                 ui_state['quit_button'] = Button('bouton_quitter', 'bouton_quitter_hover', 'bouton_quitter_focus', on_click_quit)
 

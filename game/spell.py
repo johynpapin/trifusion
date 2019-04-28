@@ -6,7 +6,7 @@ class Spell:
         self.cost = 1
 
 class MoveSpell(Spell):
-    def __init__(self, destination):
+    def __init__(self, destination=Position(0, 0)):
         super().__init__()
 
         self.destination = destination
