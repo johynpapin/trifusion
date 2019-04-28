@@ -194,10 +194,10 @@ class Grid:
                 current = Position(current.x - 1, current.y)
                 L.append(current)
             if current.y < end.y:
-                current = Position(current.x + 1, current.y)
+                current = Position(current.x , current.y + 1)
                 L.append(current)
             if current.y > end.y:
-                current = Position(current.x - 1, current.y)
+                current = Position(current.x , current.y - 1)
                 L.append(current)
         return L
 
