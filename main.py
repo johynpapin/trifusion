@@ -129,9 +129,9 @@ def on_draw():
         else:
             enchantment = enchantments[ui_state['current_enchantment']]
 
-            ui_state['return_button'].draw(main_batch, ui_top_group, Position(29, window.get_size()[1] - header_height + 23))
+            ui_state['return_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] - header_height + 17))
 
-            ui_state['add_button'].draw(main_batch, ui_top_group, Position(360, 125))
+            ui_state['add_button'].draw(main_batch, ui_top_group, Position(395, 75))
 
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
