@@ -1,4 +1,5 @@
 import pyglet
+import math
 from math import ceil
 from math import sqrt
 from random import randint
@@ -186,27 +187,8 @@ class Grid:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
     
     def find_path(self, start, end):
-        i = 0
-        L=[]
-        pos = start
-        while pos != end:
-            if i == 1:
-                i = 0
-                if pos.y < end.y:
-                    pos = Position(pos.x, pos.y + 1)
-                    L.append(pos)
-                elif pos.y > end.y:
-                    pos = Position(pos.x, pos.y - 1)
-                    L.append(pos)
-            else:
-                i = 1
-                if pos.x < end.x:
-                    pos = Position(pos.x + 1, pos.y)
-                    L.append(pos)
-                elif pos.x > end.x:
-                    pos = Position(pos.x - 1, pos.y)
-                    L.append(pos)
-        return L
+        oport = accesible_neighbour(start, end)i
+        return lowest(end, oport)
 
     def find_path2(self, start, end):
         if start == end:
