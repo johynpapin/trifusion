@@ -1,4 +1,3 @@
-from .grid import Road
 class Spell:
     def __init__(self):
         self.cost = 1
@@ -13,15 +12,13 @@ class MoveSpell(Spell):
         if len(state) == 0:
             state['next_move'] = entity.speed
             position = entity.position
-            if isinstance(entity.grid.grid[position].resource, Road):
-                state['next_move'] = entity.speed*2
 
         if state['next_move'] != 0:
             state['next_move'] -= 1
             return (False,)
 
         path = entity.grid.find_path(entity.position, self.destination)
-        
+ 
         if path is None:
             return (False,)
 
@@ -46,7 +43,7 @@ class HarvestSpell(Spell):
     def update(self, entity, state):
         if len(state) == 0:
             pass
-        
+
         return (True,)
 
 class WaitSpell(Spell):
