@@ -36,27 +36,29 @@ def accessible_neighbour(point, end):
 def lowest_list(openlist,end):
     L = []
     LL = []
+
     for el in openlist:
-        L.append(el.G + el.H)
+        L.append(el.G)
     
     mini = min(L)
-    
     i = 0
+
     for el in L:
         if el == mini:
             LL.append(openlist[i])
         i += 1
-    
+
     L = []
+
     for el in LL:
-        L.append(sqrt((el.Position.x + end.x)**2 + (el.Position.y + end.y)**2))
+        L.append(el.H)
 
     mini = min(L)
-    
-    i = 0
+    i=0
+
     for el in L:
-        if el == mini:
-            return LL[i]
+        if el==mini:
+            return(LL[i])
         i += 1
 
 class Node:
@@ -65,7 +67,9 @@ class Node:
         self.Father = Father
         if Father == None:
             self.G = 0
-        else :
+        elif isinstance(Position, Road):
+            self.G = Father.G + 0.5
+        else:
             self.G = Father.G + 1
         self.H = distance(self.Position,end)
 
@@ -106,8 +110,43 @@ class Grid:
                 if rd() < 0.95:
                     self.grid[position].resource = Forest()
 
-
         return self.grid[position]
+
+    def is_road(self, position):
+        self.get_tile(position).resource = Road()
+    def found_resource(self, position, resource):
+        i=1
+        while true:
+            X=i
+            Y=0
+            for i in range(i):
+                X-=1
+                y+=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+
+            for i in range(i):
+                X-=1
+                y-=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+
+            for i in range(i):
+                X+=1
+                y-=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+
+            for i in range(i):
+                X+=1
+                y+=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+            i += 1
 
     def move_camera(self, dx, dy):
         self.camera.x -= dx
@@ -213,6 +252,16 @@ class Forest:
 
     def draw(self, batch, group, position, scale):
         self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = ceil(scale)
+
+class Road:
+    def __init(self):
+        self.road_type = 0
+
+    def draw(self, batch, group, position, scale):
+        self.sprite = pyglet.sprite.Sprite(img=resources.images['road'], batch=batch, group=group)
         self.sprite.x = position.x
         self.sprite.y = position.y
         self.sprite.scale = ceil(scale)

@@ -21,6 +21,11 @@ pyglet.resource.add_font('04b_03.ttf')
 
 grid_offset = Position(500, 0)
 grid = Grid()
+for i in range(10):
+    Pos = Position(-1,i)
+    grid.is_road(Pos)
+    Pos = Position(i,-1)
+    grid.is_road(Pos)
 
 e0 = SimpleEnchantment("IA stupide")
 
