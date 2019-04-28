@@ -39,8 +39,8 @@ state = GameState()
 slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
-goblin = GoblinEntity(grid, e0, state)
-entities.append(goblin)
+# goblin = GoblinEntity(grid, e0, state)
+# entities.append(goblin)
 #
 # orc = OrcEntity(grid, e0, state)
 # entities.append(orc)
@@ -255,14 +255,14 @@ def on_draw():
         not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
         not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
-        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_slime'], x=170, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
-        not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, SlimeEntity), entities)))), font_name='04b_03b', font_size=12, x=215, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_slime'], x=150, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, SlimeEntity), entities)))), font_name='04b_03b', font_size=12, x=195, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
-        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=290, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
-        not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, GoblinEntity), entities)))), font_name='04b_03b', font_size=12, x=335, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=250, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, GoblinEntity), entities)))), font_name='04b_03b', font_size=12, x=295, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
-        # not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=290, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
-        # not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, GoblinEntity), entities)))), font_name='04b_03b', font_size=12, x=335, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_orc'], x=350, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, OrcEntity), entities)))), font_name='04b_03b', font_size=12, x=395, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
 
         ui_state['buy_button_slime'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
