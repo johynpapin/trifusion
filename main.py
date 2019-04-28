@@ -98,7 +98,7 @@ class MoveSpellButton(Button):
             self.image = resources.images['ui_spell_box_move']
 
         self.hover_image = self.image
-        self.focus_image = self.focus_image
+        self.focus_image = self.image
 
     def draw(self, batch, group, position, top_group):
         super().draw(batch, group, position)
@@ -110,7 +110,8 @@ class MoveSpellButton(Button):
             self.y_label = pyglet.text.Label(str(self.spell.destination.y), font_name='04b_03b', font_size=20, x=self.last_position.x + 183, y=window.get_size()[1] - self.last_position.y - 53, batch=batch, group=top_group, anchor_y='top', anchor_x='left')
 
     def on_click(self):
-        print(self.mode)
+        if not self.mode:
+            ui_state['waiting_for_position'] = self.spell
 
 ui_state = {
     'tab_entities_focus': False,
@@ -139,7 +140,9 @@ ui_state = {
     'current_enchantment': None,
     'spells_order': [],
 
-    'spell_buttons': []
+    'spell_buttons': [],
+
+    'waiting_for_position': None
 }
 
 @window.event
@@ -292,6 +295,10 @@ def on_mouse_press(x, y, button, modifiers):
     mouse_position = Position(x, window.get_size()[1] - y)
 
     if button == pyglet.window.mouse.LEFT:
+        if x >= grid_offset.x and y >= grid_offset.y and ui_state['waiting_for_position'] is not None:
+            ui_state['waiting_for_position'].destination = grid.get_position(grid_offset, window.get_size(), x, y)
+            ui_state['waiting_for_position'] = None
+        
         ui_state['tab_entities_focus'] = is_position_in_rectangle(mouse_position, 32, 30, 106, 71)
         ui_state['tab_enchantments_focus'] = is_position_in_rectangle(mouse_position, 141, 30, 106, 71)
         ui_state['tab_spells_focus'] = is_position_in_rectangle(mouse_position, 250, 30, 106, 71)
@@ -365,9 +372,9 @@ def generate_enchantments():
                                 index = len(e.spells)
                                 e.spells.append(spell())
                                 
-                                if isinstance(spell, MoveSpell):
-                                    state.spell_boxes.append(MoveSpellButton(spell))
-                                    state.spell_boxes[-1].set_resource_mode(not isinstance(spell.destination, Position))
+                                if isinstance(e.spells[-1], MoveSpell):
+                                    state.spell_boxes.append(MoveSpellButton(e.spells[-1]))
+                                    state.spell_boxes[-1].set_resource_mode(not isinstance(e.spells[-1].destination, Position))
                                 else:
                                     state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
                                 

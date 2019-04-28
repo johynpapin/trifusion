@@ -112,6 +112,23 @@ class Grid:
 
         return self.grid[position]
 
+    def get_position(self, offset, size, x, y):
+        camera_offset = Position(-self.camera.x % 70, self.camera.y % 70)
+        zoom = self.zoom
+
+        y = size[1] - y
+
+        start_x = self.camera.x // (70 * zoom)
+        start_y = self.camera.y // (70 * zoom)
+        
+        x -= offset.x - camera_offset.x
+        y -= offset.y - camera_offset.y
+
+        x //= 70
+        y //= 70
+
+        return Position(int(start_x + x + 1), int(start_y + y))
+
     def is_road(self, position):
         self.get_tile(position).resource = Road()
 
