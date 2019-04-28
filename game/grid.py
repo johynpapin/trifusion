@@ -1,45 +1,36 @@
 import pyglet
-import math
 from math import ceil
 from math import sqrt
 from random import randint
 from .utils import Position
 from . import resources
 from random import random as rd
-
+    
 def distance(A, B):
     return abs(A.x - B.x) + abs(A.y - B.y)
 
-def distance_ecl(A, B):
-    return sqrt((A.x - B.x)**2 + (A.y + B.y)**2)
-
 def lowest(end, Potential):
-    first = Potential[0]
-    mini = [first, distance(first, end)]
+    tst = Potential[0]
+    mini = [tst, distance(tst.Position, end)]
 
     for el in Potential:
-        dst = distance_ecl(el, end)
+        dst = distance(el.Position, end)
+    
         if dst < mini[1]:
             mini = [el, dst]
-
+    
     return mini[0]
-
-def acces(point, end):
-    l=[]
-    x = point.x
-    y = point.y
-    return [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]
 
 def accessible_neighbour(point, end):
     l = []
-    x = point.x
-    y = point.y
-
+    x = point.Position.x
+    y = point.Position.y
+    
     for el in [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]:
         #if not is_obstacle(el):
         if True:
             l.append(Node(el, point, end))
-
+    
     return l
 
 def lowest_list(openlist,end):
@@ -47,8 +38,8 @@ def lowest_list(openlist,end):
     LL = []
 
     for el in openlist:
-        L.append(el.G + el.H)
-
+        L.append(el.G)
+    
     mini = min(L)
     i = 0
 
@@ -60,7 +51,7 @@ def lowest_list(openlist,end):
     L = []
 
     for el in LL:
-        L.append(distance)
+        L.append(el.H)
 
     mini = min(L)
     i=0
@@ -76,6 +67,8 @@ class Node:
         self.Father = Father
         if Father == None:
             self.G = 0
+        elif isinstance(Position, Road):
+            self.G = Father.G + 0.5
         else:
             self.G = Father.G + 1
         self.H = distance(self.Position,end)
@@ -120,8 +113,7 @@ class Grid:
         return self.grid[position]
 
     def is_road(self, position):
-#        self.get_tile(position).resource = Road()
-        return False
+        self.get_tile(position).resource = Road()
     def found_resource(self, position, resource):
         i=1
         while true:
@@ -137,6 +129,14 @@ class Grid:
             for i in range(i):
                 X-=1
                 y-=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+
+            for i in range(i):
+                X+=1
+                y-=1
+                Pos = Position(x, y)
                 Pos = Position(x, y)
                 if isinstance(get_tile(Pos).resource, resource):
                     return Pos
@@ -265,20 +265,3 @@ class Tile:
             self.resource.draw(batch, resources_group, position, scale)
 
 class House:
-    def __init__(self):
-        pass
-
-    def draw(self, batch, group, position, scale):
-        self.sprite = pyglet.sprite.Sprite(img=resources.images['house'], batch=batch, group=group)
-        self.sprite.x = position.x
-        self.sprite.y = position.y
-        self.sprite.scale = ceil(scale)
-
-class Forest:
-    def __init__(self):
-        self.forest_type = randint(0, 5)
-
-    def draw(self, batch, group, position, scale):
-        self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
-        self.sprite.x = position.x
-        self.sprite.y = position.y
