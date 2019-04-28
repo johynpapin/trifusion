@@ -3,9 +3,9 @@
 
 import pyglet
 from game.grid import Grid
-from game.entity import SlimeEntity
+from game.entity import SlimeEntity, GoblinEntity
 from game.utils import Position
-from game.spell import MoveSpell, HarvestSpell
+from game.spell import MoveSpell, HarvestSpell, DropSpell
 from game.enchantment import SimpleEnchantment
 import game.resources as resources
 
@@ -26,7 +26,7 @@ e0 = SimpleEnchantment("IA stupide")
 
 enchantments = [e0]
 entities = []
-spells = [MoveSpell, HarvestSpell]
+spells = [MoveSpell, HarvestSpell, DropSpell]
 
 class GameState:
     def __init__(self):
@@ -38,6 +38,10 @@ state = GameState()
 
 slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
+
+
+goblin = GoblinEntity(grid, e0, state)
+entities.append(goblin)
 
 def on_click_buy_slime():
     if state.wood_count >= 20:
@@ -97,6 +101,7 @@ ui_state = {
     'quit_button': None,
 
     'window': False,
+    'game_over': False,
 
     'buy_button_slime': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime),
 
@@ -181,8 +186,10 @@ def on_draw():
             ui_state['add_button'].draw(main_batch, ui_top_group, Position(395, 75))
 
             if ui_state['window'] :
-                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=700, y=window.get_size()[1]-100, batch=main_batch, group=ui_new_window))
-                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(1250,window.get_size()[1]-140))
+                modal_x = window.get_size()[0] // 2 - resources.images['fenetre'].width // 2
+                modal_y = window.get_size()[1] // 2 - resources.images['fenetre'].height // 2
+                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=modal_x, y=window.get_size()[1] - modal_y, batch=main_batch, group=ui_new_window))
+                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(modal_x + 550, window.get_size()[1] - modal_y - 30))
 
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
@@ -209,6 +216,9 @@ def on_draw():
         ui_state['buy_button_slime'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
 
         ui_state['buy_button_goblin'].draw(main_batch, ui_top_group, Position(190, window.get_size()[1] -  230))
+
+    if ui_state['game_over']:
+        not_edible.append(pyglet.text.Label('Game over', font_name='04b_03b', font_size=60, x=window.get_size()[0] // 2, y=window.get_size()[1] // 2, anchor_x='center', anchor_y='center', group=ui_on_window, batch=main_batch))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
@@ -366,6 +376,9 @@ def update(dt):
         entity.update(dt)
 
     entities = list(filter(lambda entity: not entity.dead, entities))
+
+    if len(entities) == 0 and state.wood_count < 20:
+        ui_state['game_over'] = True
 
 pyglet.clock.schedule_interval(update, 1/10)
 

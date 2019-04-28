@@ -59,7 +59,12 @@ class HarvestSpell(Spell):
 
     def update(self, entity, state):
         if len(state) == 0:
-            pass
+            state['ticks_left'] = 30
+
+        state['ticks_left'] -= 1
+
+        if state['ticks_left'] > 0:
+            return (False,)
 
         if isinstance(entity.grid.get_tile(entity.position).resource, Forest):
             entity.grid.get_tile(entity.position).resource = None
