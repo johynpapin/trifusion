@@ -216,6 +216,9 @@ def on_mouse_press(x, y, button, modifiers):
             button.focus = is_position_in_rectangle(mouse_position, button.last_position.x, button.last_position.y, button.image.width, button.image.height)
 
 def generate_enchantments():
+    buttons.clear()
+    state.enchantment_boxes = []
+
     for i, enchantment in enumerate(enchantments):
         def generate_on_click(i):
             def on_click():
@@ -236,7 +239,6 @@ def generate_enchantments():
                                 is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
                                 ui_state['spells_order'][current_spell_box.index], ui_state['spells_order'][spell_box.index] = ui_state['spells_order'][spell_box.index], ui_state['spells_order'][current_spell_box.index]
                                 spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
-                                print(len(enchantment.spells), len(state.spell_boxes))
                                 return
 
                     return on_drag
@@ -252,6 +254,7 @@ def generate_enchantments():
                 def on_click_retour():
                     ui_state['current_enchantment'] = None
                     ui_state['return_button'] = None
+                    state.spell_boxes = []
                     generate_enchantments()
 
                 ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
