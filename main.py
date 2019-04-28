@@ -33,6 +33,40 @@ listeners = {}
 # slime = SlimeEntity(grid, e0)
 #entities.append(slime)
 
+def on_click_buy():
+    pass
+
+buttons = set()
+
+class Button():
+    def __init__(self, image, hover_image, focus_image, on_click, draggable=False):
+        global buttons
+
+        self.hover = False
+        self.focus = False
+
+        self.image = resources.images[image]
+        self.hover_image = resources.images[hover_image]
+        self.focus_image = resources.images[focus_image]
+
+        self.draggable = draggable
+
+        self.on_click = on_click
+
+        buttons.add(self)
+
+        self.last_position = Position(0, 0)
+
+    def draw(self, batch, group, position):
+        self.last_position = Position(position.x, window.get_size()[1] - position.y)
+
+        if self.focus:
+            self.sprite = pyglet.sprite.Sprite(self.focus_image, x=position.x, y=position.y, batch=batch, group=group)
+        elif self.hover:
+            self.sprite = pyglet.sprite.Sprite(self.hover_image, x=position.x, y=position.y, batch=batch, group=group)
+        else:
+            self.sprite = pyglet.sprite.Sprite(self.image, x=position.x, y=position.y, batch=batch, group=group)
+
 ui_state = {
     'tab_entities_focus': False,
     'tab_entities_hover': False,
@@ -50,6 +84,8 @@ ui_state = {
     'quit_button': None,
 
     'window': False,
+
+    'buy_button': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy),
 
     'current_tab': 0,
     'current_enchantment': None,
@@ -158,6 +194,7 @@ def on_draw():
     if ui_state['current_tab'] == 0:
         not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
         not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        ui_state['buy_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
@@ -176,36 +213,7 @@ def on_mouse_drag(x, y, dx, dy, ebuttons, modifiers):
 def is_position_in_rectangle(position, x, y, width, height):
     return x <= position.x and position.x <= x + width and y <= position.y and position.y <= y + height
 
-buttons = set()
 
-class Button():
-    def __init__(self, image, hover_image, focus_image, on_click, draggable=False):
-        global buttons
-
-        self.hover = False
-        self.focus = False
-
-        self.image = resources.images[image]
-        self.hover_image = resources.images[hover_image]
-        self.focus_image = resources.images[focus_image]
-
-        self.draggable = draggable
-
-        self.on_click = on_click
-
-        buttons.add(self)
-
-        self.last_position = Position(0, 0)
-
-    def draw(self, batch, group, position):
-        self.last_position = Position(position.x, window.get_size()[1] - position.y)
-
-        if self.focus:
-            self.sprite = pyglet.sprite.Sprite(self.focus_image, x=position.x, y=position.y, batch=batch, group=group)
-        elif self.hover:
-            self.sprite = pyglet.sprite.Sprite(self.hover_image, x=position.x, y=position.y, batch=batch, group=group)
-        else:
-            self.sprite = pyglet.sprite.Sprite(self.image, x=position.x, y=position.y, batch=batch, group=group)
 
 @window.event
 def on_mouse_motion(x, y, dx, dy):
@@ -298,6 +306,7 @@ def on_mouse_release(x, y, button, modifiers):
 
     if button == pyglet.window.mouse.LEFT:
         if ui_state['tab_entities_focus']:
+            ui_state['buy_button'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy)
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
             generate_enchantments()
