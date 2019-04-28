@@ -28,10 +28,16 @@ enchantments = [e0, e0, e0, e0, SimpleEnchantment("Olala olali olala")]
 entities = []
 spells = [MoveSpell, HarvestSpell]
 
-listeners = {}
+class GameState:
+    def __init__(self):
+        self.enchantment_boxes = []
+        self.spell_boxes = []
+        self.wood_count = 0
 
-slime = SlimeEntity(grid, e0)
-#entities.append(slime)
+state = GameState()
+
+slime = SlimeEntity(grid, e0, state)
+entities.append(slime)
 
 ui_state = {
     'tab_entities_focus': False,
@@ -51,13 +57,6 @@ ui_state = {
     'current_enchantment': None,
     'spells_order': []
 }
-
-class GameState:
-    def __init__(self):
-        self.enchantment_boxes = []
-        self.spell_boxes = []
-
-state = GameState()
 
 @window.event
 def on_draw():

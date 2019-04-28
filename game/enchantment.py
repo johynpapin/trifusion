@@ -46,4 +46,6 @@ class Executor():
             if self.current >= len(self.enchantment.spells):
                 self.current = 0
 
-            self.state = {} 
+            self.state = {}
+
+            print('> next spell:', type(self.enchantment.spells[self.current]).__name__)

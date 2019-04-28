@@ -117,63 +117,14 @@ class Grid:
 
     def found_resource(self, position, resource):
         i = 1
+    
         while True:
-            x = i
-            y = 0
-            
-            for i in range(i):
-                x -= 1
-                y += 1
+            for dx in range(0, i, 1):
+                positions = [position + Position(dx, i - dx), position + Position(-dx, i - dx), position + Position(dx, dx - i), position + Position(-dx, dx -i)]
                 
-                pos = Position(x, y)
-
-                if isinstance(self.get_tile(pos).resource, resource):
-                    return pos
-
-            for i in range(i):
-                x -= 1
-                y -= 1
-                
-                pos = Position(x, y)
-
-                if isinstance(self.get_tile(pos).resource, resource):
-                    return pos
-
-            for i in range(i):
-                x += 1
-                y -= 1
-
-                pos = Position(x, y)
-
-                if isinstance(self.get_tile(pos).resource, resource):
-                    return pos
-
-            for i in range(i):
-                x -= 1
-                y -= 1
-                
-                pos = Position(x, y)
-                
-                if isinstance(self.get_tile(pos).resource, resource):
-                    return pos
-
-            for i in range(i):
-                x += 1
-                y -= 1
-
-                pos = Position(x, y)
-                
-                if isinstance(self.get_tile(pos).resource, resource):
-                    return pos
-
-            for i in range(i):
-                x += 1
-                y += 1
-                
-                pos = Position(x, y)
-
-                if isinstance(self.get_tile(Pos).resource, resource):
-                    return pos
+                for position in positions:
+                    if isinstance(self.get_tile(position).resource, resource):
+                        return position
             
             i += 1
 
@@ -199,24 +150,30 @@ class Grid:
         for entity in entities:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
-                entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
+                entity.draw(batch, entities_group, Position((entity.position.x - start_x - 1) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
     def find_path(self, start, end):
-        L=[]
+        L = []
+        
         current = start
-        while current.x != end.x and current.y != end.y:
+        
+        while current.x != end.x or current.y != end.y:
             if current.x < end.x:
                 current = Position(current.x + 1, current.y)
                 L.append(current)
+        
             if current.x > end.x:
                 current = Position(current.x - 1, current.y)
                 L.append(current)
+            
             if current.y < end.y:
                 current = Position(current.x , current.y + 1)
                 L.append(current)
+            
             if current.y > end.y:
                 current = Position(current.x , current.y - 1)
                 L.append(current)
+        
         return L
 
 
