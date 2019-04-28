@@ -27,8 +27,8 @@ def lowest(end, Potential):
 
 def accessible_neighbour(point, end):
     l = []
-    x = point.Position.x
-    y = point.Position.y
+    x = point.x
+    y = point.y
     
     for el in [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]:
         #if not is_obstacle(el):
@@ -186,7 +186,7 @@ class Grid:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
     
     def find_path(self, start, end):
-        oport = accesible_neighbour(start, end)i
+        oport = accesible_neighbour(start, end)
         return lowest(end, oport)
 
     def find_path2(self, start, end):
@@ -197,7 +197,7 @@ class Grid:
         forbiden = []
         while [lowest_list(openlist, end).Position.x, lowest_list(openlist, end).Position.y] != [end.x, end.y]:
             current = lowest_list(openlist, end)
-            oport = accessible_neighbour(current, end)
+            oport = accessible_neighbour(current.Position, end)
         
             for position_potential in oport:
                 if position_potential.Position in forbiden:
