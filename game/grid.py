@@ -18,7 +18,7 @@ def lowest(end, Potential):
     mini = [first, distance(first, end)]
 
     for el in Potential:
-        dst = distance(el, end)
+        dst = distance_eucl(el, end)
         if dst < mini[1]:
             mini = [el, dst]
 
@@ -195,8 +195,8 @@ class Grid:
         L = []
         current = start
         while end != current:
-            oport = acces(start, end)
-            current=lowest(end, oport)
+            oport = acces(current, end)
+            current = lowest(end, oport)
             L.append(current)
 
     def find_path2(self, start, end):
