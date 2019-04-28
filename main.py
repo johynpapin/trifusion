@@ -53,6 +53,10 @@ ui_state = {
 
     'add_button': None,
 
+    'quit_button': None,
+
+    'window': False,
+
     'current_tab': 0,
     'current_enchantment': None,
     'spells_order': []
@@ -74,6 +78,8 @@ def on_draw():
     ui_background_group = pyglet.graphics.OrderedGroup(3)
     ui_group = pyglet.graphics.OrderedGroup(4)
     ui_top_group = pyglet.graphics.OrderedGroup(5)
+    ui_new_window = pyglet.graphics.OrderedGroup(6)
+    ui_on_window = pyglet.graphics.OrderedGroup(7)
 
     ui_tabs_y = window.get_size()[1] - 30
 
@@ -132,6 +138,10 @@ def on_draw():
 
             ui_state['add_button'].draw(main_batch, ui_top_group, Position(395, 75))
 
+            if ui_state['window'] :
+                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=700, y=window.get_size()[1]-100, batch=main_batch, group=ui_new_window))
+                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(1250,window.get_size()[1]-140))
+
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
 
@@ -144,8 +154,8 @@ def on_draw():
                 not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
 
     if ui_state['current_tab'] == 0:
-        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_top_group))
-        not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=60, y=window.get_size()[1] - 140, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
@@ -264,7 +274,15 @@ def generate_enchantments():
 
                 ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
 
-                ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_retour)
+                def on_click_add():
+                    ui_state['window'] = True
+
+                ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_add)
+
+                def on_click_quit():
+                    ui_state['window'] = False
+
+                ui_state['quit_button'] = Button('bouton_quitter', 'bouton_quitter_hover', 'bouton_quitter_focus', on_click_quit)
 
                 ui_state['current_enchantment'] = i
 

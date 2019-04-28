@@ -119,9 +119,9 @@ class Grid:
         i = 1
     
         while True:
-            for dx in range(0, i, 1):
+            for dx in range(0, i + 1, 1):
                 positions = [position + Position(dx, i - dx), position + Position(-dx, i - dx), position + Position(dx, dx - i), position + Position(-dx, dx -i)]
-                
+                print(i, list(map(str, positions)))
                 for position in positions:
                     if isinstance(self.get_tile(position).resource, resource):
                         return position
