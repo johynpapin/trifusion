@@ -44,14 +44,21 @@ ui_state = {
     'tab_settings_hover': False,
 
     'current_tab': 0,
-    'current_enchantment': None
+    'current_enchantment': None,
+    'spells_order': []
 }
 
-enchantment_boxes = []
-spell_boxes = []
+class GameState:
+    def __init__(self):
+        self.enchantment_boxes = []
+        self.spell_boxes = []
+
+state = GameState()
 
 @window.event
 def on_draw():
+    global spell_boxes
+
     not_edible = []
     
     window.clear()
@@ -108,7 +115,7 @@ def on_draw():
 
     if ui_state['current_tab'] == 1:
         if ui_state['current_enchantment'] is None:
-            for i, (enchantment, button) in enumerate(zip(enchantments, enchantment_boxes)):
+            for i, (enchantment, button) in enumerate(zip(enchantments, state.enchantment_boxes)):
                 position = Position(50, window.get_size()[1] - (header_height + i * (resources.images['ui_enchantment_box'].height + 5)))
                 button.draw(main_batch, ui_group, position)
                 not_edible.append(pyglet.text.Label(enchantment.name, font_name='04b_03b', font_size=18, x=position.x + 70, y=position.y - 20, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
@@ -118,8 +125,10 @@ def on_draw():
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
 
-            for i, (spell, button) in enumerate(zip(enchantment.spells, spell_boxes)):
-                position = Position(50, window.get_size()[1] - (header_height + i * (resources.images['ui_spell_box'].height + 5)))
+            for j, i in enumerate(ui_state['spells_order']):
+                spell = enchantment.spells[i]
+                button = state.spell_boxes[i]
+                position = Position(50, window.get_size()[1] - (header_height + j * (resources.images['ui_spell_box'].height + 5)))
                 button.draw(main_batch, ui_group, position)
                 not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
                 not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
@@ -161,7 +170,6 @@ class Button():
         buttons.add(self)
 
         self.last_position = Position(0, 0)
-        self.offset = Position(0, 0)
 
     def draw(self, batch, group, position):
         self.last_position = Position(position.x, window.get_size()[1] - position.y)
@@ -218,35 +226,40 @@ def on_mouse_release(x, y, button, modifiers):
                             return on_click
 
                         def generate_on_drag_still_for_spell(spell_index, enchantment_index):
+                            current_spell_box = state.spell_boxes[spell_index]
+
                             def on_drag(x, y, dx, dy):
-                                global spell_boxes
+                                for j, spell_box in enumerate(state.spell_boxes):
+                                    mouse_position = Position(x, window.get_size()[1] - y)
+ 
+                                    if spell_box.index < current_spell_box.index and \
+                                        is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
+                                       
+                                        print('swaping {} with {}'.format(spell_box.index, current_spell_box.index))
 
-                                spell_boxes_copy = spell_boxes.copy()
+                                        ui_state['spells_order'][current_spell_box.index] = spell_box.index
+                                        ui_state['spells_order'][spell_box.index] = current_spell_box.index
 
-                                for j, spell_box in enumerate(reversed(spell_boxes_copy)):
-                                    j = len(spell_boxes_copy) - j - 1
-                       
-                                    if y >= spell_box.last_position.y + spell_box.image.height / 2:
-                                        print(y, spell_box.last_position.y)
-                                        if j != spell_index and j > spell_index:
-                                            print('swaping {} with {}'.format(spell_index, j))
-                                            
-                                            spell_boxes[spell_index], spell_boxes[j] = spell_boxes[j], spell_boxes[spell_index]
-                                            enchantment.spells[spell_index], enchantment.spells[j] = enchantment.spells[j], enchantment.spells[spell_index]                                    
-
-                                            break
+                                        spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
+                                        
+                                        print(len(enchantment.spells), len(state.spell_boxes))
+                                        return
 
                             return on_drag
 
+                        ui_state['spells_order'] = []
+
                         for j, spell in enumerate(enchantments[i].spells):
-                            spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
-                            spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
+                            state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
+                            state.spell_boxes[-1].index = j
+                            state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
+                            ui_state['spells_order'].append(j)
 
                         ui_state['current_enchantment'] = i
 
                     return on_click
 
-                enchantment_boxes.append(Button('ui_enchantment_box', 'ui_enchantment_box_hover', 'ui_enchantment_box', generate_on_click(i)))
+                state.enchantment_boxes.append(Button('ui_enchantment_box', 'ui_enchantment_box_hover', 'ui_enchantment_box', generate_on_click(i)))
             ui_state['current_tab'] = 1
         elif ui_state['tab_spells_focus']:
             ui_state['current_tab'] = 2
