@@ -41,6 +41,8 @@ class HarvestSpell(Spell):
     def __init__(self):
         super().__init__()
 
+        self.cost = 2
+
     def update(self, entity, state):
         if len(state) == 0:
             pass
