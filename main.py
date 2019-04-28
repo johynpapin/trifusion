@@ -178,8 +178,10 @@ def on_draw():
             ui_state['add_button'].draw(main_batch, ui_top_group, Position(395, 75))
 
             if ui_state['window'] :
-                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=700, y=window.get_size()[1]-100, batch=main_batch, group=ui_new_window))
-                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(1250,window.get_size()[1]-140))
+                modal_x = window.get_size()[0] // 2 - resources.images['fenetre'].width // 2
+                modal_y = window.get_size()[1] // 2 - resources.images['fenetre'].height // 2
+                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=modal_x, y=window.get_size()[1] - modal_y, batch=main_batch, group=ui_new_window))
+                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(modal_x + 550, window.get_size()[1] - modal_y - 30))
 
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
