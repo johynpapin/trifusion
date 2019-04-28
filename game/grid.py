@@ -6,7 +6,7 @@ from random import randint
 from .utils import Position
 from . import resources
 from random import random as rd
-    
+
 def distance(A, B):
     return abs(A.x - B.x) + abs(A.y - B.y)
 
@@ -19,22 +19,22 @@ def lowest(end, Potential):
 
     for el in Potential:
         dst = distance(el.Position, end)
-    
+
         if dst < mini[1]:
             mini = [el, dst]
-    
+
     return mini[0]
 
 def accessible_neighbour(point, end):
     l = []
     x = point.Position.x
     y = point.Position.y
-    
+
     for el in [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]:
         #if not is_obstacle(el):
         if True:
             l.append(Node(el, point, end))
-    
+
     return l
 
 def lowest_list(openlist,end):
@@ -43,7 +43,7 @@ def lowest_list(openlist,end):
 
     for el in openlist:
         L.append(el.G + el.H)
-    
+
     mini = min(L)
     i = 0
 
@@ -172,7 +172,7 @@ class Grid:
 
         start_x = self.camera.x // (70 * zoom)
         start_y = self.camera.y // (70 * zoom)
-        
+
         size_x = ceil((size[0] - offset.x) / (70 * zoom)) + 1
         size_y = ceil((size[1] - offset.y) / (70 * zoom)) + 1
 
@@ -185,30 +185,30 @@ class Grid:
             if entity.position.x >= start_x and entity.position.y >= start_y and \
                     entity.position.x - start_x < size_x and entity.position.y - start_y < size_y:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
-    
+
     def find_path(self, start, end):
-        oport = accesible_neighbour(start, end)i
+        oport = accesible_neighbour(start, end)
         return lowest(end, oport)
 
     def find_path2(self, start, end):
         if start == end:
             return []
-        
+
         openlist = [Node(start, None, end)]
         forbiden = []
         while [lowest_list(openlist, end).Position.x, lowest_list(openlist, end).Position.y] != [end.x, end.y]:
             current = lowest_list(openlist, end)
             oport = accessible_neighbour(current, end)
-        
+
             for position_potential in oport:
                 if position_potential.Position in forbiden:
                     oport.remove(position_potential)
-            
+
             for position_seen in openlist:
                 for potential_position in oport:
                     if potential_position.Position == position_seen.Position:
                         oport.remove(potential_position)
-            
+
             if oport == []:
                 forbiden.append(current.Position)
                 openlist.remove(current)
@@ -221,7 +221,7 @@ class Grid:
                 openlist.append(lowest(end, oport))
 
         Path = [lowest_list(openlist,end)]
-        
+
         while Path[-1].Father != None:
             Path.append(Path[-1].Father)
         Pathfonded = []
