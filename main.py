@@ -144,6 +144,10 @@ def on_draw():
                 not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
                 not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
 
+    if ui_state['current_tab'] == 0:
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_top_group))
+        not_edible.append(pyglet.text.Label(state.wood_count, font_name='04b_03b', font_size=12, x=60, y=window.get_size()[1] - 120, batch=main_batch, group=ui_top_group))
+
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
     main_batch.draw()
