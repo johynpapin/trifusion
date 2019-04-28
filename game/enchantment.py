@@ -1,5 +1,6 @@
-from .spell import MoveSpell, HarvestSpell
+from .spell import MoveSpell, HarvestSpell, DropSpell
 from .utils import Position
+from .grid import Forest
 
 class Enchantment:
     def __init__(self, name):
@@ -20,7 +21,7 @@ class SimpleEnchantment(Enchantment):
     def __init__(self, name):
         super().__init__(name)
 
-        self.append_spell(MoveSpell(Position(10, 10)), HarvestSpell(), MoveSpell(Position(0, 0)))
+        self.append_spell(MoveSpell(Forest), HarvestSpell(), MoveSpell(Position(0, 0)), DropSpell())
 
 class Executor():
     def __init__(self, entity, enchantment):
@@ -45,4 +46,4 @@ class Executor():
             if self.current >= len(self.enchantment.spells):
                 self.current = 0
 
-            self.state = {} 
+            self.state = {}

@@ -3,9 +3,9 @@
 
 import pyglet
 from game.grid import Grid
-from game.entity import SlimeEntity
+from game.entity import SlimeEntity, GoblinEntity
 from game.utils import Position
-from game.spell import MoveSpell, HarvestSpell
+from game.spell import MoveSpell, HarvestSpell, DropSpell
 from game.enchantment import SimpleEnchantment
 import game.resources as resources
 
@@ -24,142 +24,28 @@ grid = Grid()
 
 e0 = SimpleEnchantment("IA stupide")
 
-enchantments = [e0, e0, e0, e0, SimpleEnchantment("Olala olali olala")]
+enchantments = [e0]
 entities = []
-spells = [MoveSpell, HarvestSpell]
-
-listeners = {}
-
-slime = SlimeEntity(grid, e0)
-#entities.append(slime)
-
-ui_state = {
-    'tab_entities_focus': False,
-    'tab_entities_hover': False,
-    'tab_enchantments_focus': False,
-    'tab_enchantments_hover': False,
-    'tab_spells_focus': False,
-    'tab_spells_hover': False,
-    'tab_settings_focus': False,
-    'tab_settings_hover': False,
-
-    'return_button': None,
-
-    'add_button': None,
-
-    'current_tab': 0,
-    'current_enchantment': None,
-    'spells_order': []
-}
+spells = [MoveSpell, HarvestSpell, DropSpell]
 
 class GameState:
     def __init__(self):
         self.enchantment_boxes = []
         self.spell_boxes = []
+        self.wood_count = 0
 
 state = GameState()
 
-@window.event
-def on_draw():
-    global spell_boxes
+slime = SlimeEntity(grid, e0, state)
+entities.append(slime)
 
-    not_edible = []
+goblin = GoblinEntity(grid, e0, state)
+entities.append(goblin)
 
-    window.clear()
-
-    main_batch = pyglet.graphics.Batch()
-
-    background_group = pyglet.graphics.OrderedGroup(0)
-    resources_group = pyglet.graphics.OrderedGroup(1)
-    entities_group = pyglet.graphics.OrderedGroup(2)
-    ui_background_group = pyglet.graphics.OrderedGroup(3)
-    ui_group = pyglet.graphics.OrderedGroup(4)
-    ui_top_group = pyglet.graphics.OrderedGroup(5)
-
-    ui_tabs_y = window.get_size()[1] - 30
-
-    ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
-    ui_footer = pyglet.sprite.Sprite(resources.images['ui_footer'], x=0, y=resources.images['ui_footer'].height, batch=main_batch, group=ui_background_group)
-
-
-    if ui_state['tab_entities_focus']:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_focus'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    elif ui_state['tab_entities_hover']:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_hover'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    else:
-        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
-
-    if ui_state['tab_enchantments_focus']:
-        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_focus'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    elif ui_state['tab_enchantments_hover']:
-        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_hover'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    else:
-        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
-
-    if ui_state['tab_spells_focus']:
-        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_focus'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    elif ui_state['tab_spells_hover']:
-        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_hover'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    else:
-        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
-
-    if ui_state['tab_settings_focus']:
-        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_focus'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    elif ui_state['tab_settings_hover']:
-        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_hover'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
-    else:
-        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
-
-
-
-    ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height + 38
-
-    ui_background = []
-    for y in range(ui_background_height):
-        ui_background.append(pyglet.sprite.Sprite(resources.images['ui_background'], x=0, y=resources.images['ui_footer'].height + y + 1, batch=main_batch, group=ui_background_group))
-
-    header_height = 125
-
-    if ui_state['current_tab'] == 1:
-        if ui_state['current_enchantment'] is None:
-            for i, (enchantment, button) in enumerate(zip(enchantments, state.enchantment_boxes)):
-                position = Position(50, window.get_size()[1] - (header_height + i * (resources.images['ui_enchantment_box'].height + 5)))
-                button.draw(main_batch, ui_group, position)
-                not_edible.append(pyglet.text.Label(enchantment.name, font_name='04b_03b', font_size=18, x=position.x + 70, y=position.y - 20, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
-        else:
-            enchantment = enchantments[ui_state['current_enchantment']]
-
-            ui_state['return_button'].draw(main_batch, ui_top_group, Position(29, window.get_size()[1] - header_height + 23))
-
-            ui_state['add_button'].draw(main_batch, ui_top_group, Position(360, 125))
-
-            not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
-            not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
-
-            for j, i in enumerate(ui_state['spells_order']):
-                spell = enchantment.spells[i]
-                button = state.spell_boxes[i]
-                position = Position(50, window.get_size()[1] - (header_height + 30 + j * (resources.images['ui_spell_box'].height + 5)))
-                button.draw(main_batch, ui_group, position)
-                not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
-                not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
-
-    grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
-
-    main_batch.draw()
-
-@window.event
-def on_mouse_drag(x, y, dx, dy, ebuttons, modifiers):
-    if ebuttons & pyglet.window.mouse.LEFT:
-        if x >= grid_offset.x and y >= grid_offset.y:
-            grid.move_camera(dx, -dy)
-        else:
-            for button in buttons.copy():
-                if button.draggable and button.focus:
-                    button.on_drag(button, x, y, dx, dy)
-
-def is_position_in_rectangle(position, x, y, width, height):
-    return x <= position.x and position.x <= x + width and y <= position.y and position.y <= y + height
+def on_click_buy():
+    if state.wood_count >= 20:
+        state.wood_count -= 20
+        entities.append(SlimeEntity(grid, e0, state))
 
 buttons = set()
 
@@ -191,6 +77,151 @@ class Button():
             self.sprite = pyglet.sprite.Sprite(self.hover_image, x=position.x, y=position.y, batch=batch, group=group)
         else:
             self.sprite = pyglet.sprite.Sprite(self.image, x=position.x, y=position.y, batch=batch, group=group)
+
+ui_state = {
+    'tab_entities_focus': False,
+    'tab_entities_hover': False,
+    'tab_enchantments_focus': False,
+    'tab_enchantments_hover': False,
+    'tab_spells_focus': False,
+    'tab_spells_hover': False,
+    'tab_settings_focus': False,
+    'tab_settings_hover': False,
+
+    'return_button': None,
+
+    'add_button': None,
+
+    'quit_button': None,
+
+    'window': False,
+    'game_over': False,
+
+    'buy_button': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy),
+
+    'current_tab': 0,
+    'current_enchantment': None,
+    'spells_order': []
+}
+
+@window.event
+def on_draw():
+    global spell_boxes
+
+    not_edible = []
+
+    window.clear()
+
+    main_batch = pyglet.graphics.Batch()
+
+    background_group = pyglet.graphics.OrderedGroup(0)
+    resources_group = pyglet.graphics.OrderedGroup(1)
+    entities_group = pyglet.graphics.OrderedGroup(2)
+    ui_background_group = pyglet.graphics.OrderedGroup(3)
+    ui_group = pyglet.graphics.OrderedGroup(4)
+    ui_top_group = pyglet.graphics.OrderedGroup(5)
+    ui_new_window = pyglet.graphics.OrderedGroup(6)
+    ui_on_window = pyglet.graphics.OrderedGroup(7)
+
+    ui_tabs_y = window.get_size()[1] - 30
+
+    ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
+    ui_footer = pyglet.sprite.Sprite(resources.images['ui_footer'], x=0, y=resources.images['ui_footer'].height, batch=main_batch, group=ui_background_group)
+
+    if ui_state['tab_entities_focus']:
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_focus'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_entities_hover']:
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_hover'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
+
+    if ui_state['tab_enchantments_focus']:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_focus'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_enchantments_hover']:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments_hover'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_enchantments = pyglet.sprite.Sprite(resources.images['ui_tab_enchantments'], x=141, y=ui_tabs_y, batch=main_batch, group=ui_group)
+
+    if ui_state['tab_spells_focus']:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_focus'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_spells_hover']:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells_hover'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_spells = pyglet.sprite.Sprite(resources.images['ui_tab_spells'], x=250, y=ui_tabs_y, batch=main_batch, group=ui_group)
+
+    if ui_state['tab_settings_focus']:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_focus'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    elif ui_state['tab_settings_hover']:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings_hover'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
+    else:
+        ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
+
+    ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height + 38
+
+    ui_background = []
+    for y in range(ui_background_height):
+        ui_background.append(pyglet.sprite.Sprite(resources.images['ui_background'], x=0, y=resources.images['ui_footer'].height + y + 1, batch=main_batch, group=ui_background_group))
+
+    header_height = 125
+
+    if ui_state['current_tab'] == 1:
+        if ui_state['current_enchantment'] is None:
+            for i, (enchantment, button) in enumerate(zip(enchantments, state.enchantment_boxes)):
+                position = Position(50, window.get_size()[1] - (header_height + i * (resources.images['ui_enchantment_box'].height + 5)))
+                button.draw(main_batch, ui_group, position)
+                not_edible.append(pyglet.text.Label(enchantment.name, font_name='04b_03b', font_size=18, x=position.x + 70, y=position.y - 20, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        else:
+            enchantment = enchantments[ui_state['current_enchantment']]
+
+            ui_state['return_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] - header_height + 17))
+
+            ui_state['add_button'].draw(main_batch, ui_top_group, Position(395, 75))
+
+            if ui_state['window'] :
+                not_edible.append(pyglet.sprite.Sprite(resources.images['fenetre'], x=700, y=window.get_size()[1]-100, batch=main_batch, group=ui_new_window))
+                ui_state['quit_button'].draw(main_batch, ui_on_window, Position(1250,window.get_size()[1]-140))
+
+            not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
+            not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
+
+            for j, i in enumerate(ui_state['spells_order']):
+                spell = enchantment.spells[i]
+                button = state.spell_boxes[i]
+                position = Position(50, window.get_size()[1] - (header_height + 30 + j * (resources.images['ui_spell_box'].height + 5)))
+                button.draw(main_batch, ui_group, position)
+                not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
+                not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
+
+    if ui_state['current_tab'] == 0:
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_slime'], x=170, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(entities)), font_name='04b_03b', font_size=12, x=215, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
+        ui_state['buy_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
+
+    if ui_state['game_over']:
+        not_edible.append(pyglet.text.Label('Game over', font_name='04b_03b', font_size=60, x=window.get_size()[0] // 2, y=window.get_size()[1] // 2, anchor_x='center', anchor_y='center', group=ui_on_window, batch=main_batch))
+
+    grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
+
+    main_batch.draw()
+
+@window.event
+def on_mouse_drag(x, y, dx, dy, ebuttons, modifiers):
+    if ebuttons & pyglet.window.mouse.LEFT:
+        if x >= grid_offset.x and y >= grid_offset.y:
+            grid.move_camera(dx, -dy)
+        else:
+            for button in buttons.copy():
+                if button.draggable and button.focus:
+                    button.on_drag(button, x, y, dx, dy)
+
+def is_position_in_rectangle(position, x, y, width, height):
+    return x <= position.x and position.x <= x + width and y <= position.y and position.y <= y + height
+
+
 
 @window.event
 def on_mouse_motion(x, y, dx, dy):
@@ -254,14 +285,30 @@ def generate_enchantments():
                     ui_state['spells_order'].append(j)
 
                 def on_click_retour():
+                    spells = enchantments[ui_state['current_enchantment']].spells.copy()
+
+                    for position, spell_index in enumerate(ui_state['spells_order']):
+                        spells[position] = enchantments[ui_state['current_enchantment']].spells[spell_index]
+
+                    enchantments[ui_state['current_enchantment']].spells = spells
+
                     ui_state['current_enchantment'] = None
                     ui_state['return_button'] = None
+
                     state.spell_boxes = []
                     generate_enchantments()
 
                 ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
 
-                ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_retour)
+                def on_click_add():
+                    ui_state['window'] = True
+
+                ui_state['add_button'] = Button('ui_enchantment_add', 'ui_enchantment_add_hover', 'ui_enchantment_add_focus', on_click_add)
+
+                def on_click_quit():
+                    ui_state['window'] = False
+
+                ui_state['quit_button'] = Button('bouton_quitter', 'bouton_quitter_hover', 'bouton_quitter_focus', on_click_quit)
 
                 ui_state['current_enchantment'] = i
 
@@ -275,6 +322,7 @@ def on_mouse_release(x, y, button, modifiers):
 
     if button == pyglet.window.mouse.LEFT:
         if ui_state['tab_entities_focus']:
+            ui_state['buy_button'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy)
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
             generate_enchantments()
@@ -305,8 +353,15 @@ def on_mouse_scroll(x, y, scroll_x, scroll_y):
     grid.zoom = 1.1 ** scroll
 
 def update(dt):
+    global entities
+
     for entity in entities:
         entity.update(dt)
+
+    entities = list(filter(lambda entity: not entity.dead, entities))
+
+    if len(entities) == 0 and state.wood_count < 20:
+        ui_state['game_over'] = True
 
 pyglet.clock.schedule_interval(update, 1/10)
 
