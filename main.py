@@ -39,10 +39,15 @@ state = GameState()
 slime = SlimeEntity(grid, e0, state)
 entities.append(slime)
 
-def on_click_buy():
+def on_click_buy_slime():
     if state.wood_count >= 20:
         state.wood_count -= 20
         entities.append(SlimeEntity(grid, e0, state))
+
+def on_click_buy_goblin():
+    if state.wood_count >= 50:
+        state.wood_count -= 50
+        entities.append(GoblinEntity(grid, e0, state))
 
 buttons = set()
 
@@ -93,7 +98,9 @@ ui_state = {
 
     'window': False,
 
-    'buy_button': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy),
+    'buy_button_slime': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime),
+
+    'buy_button_goblin': Button('acheter_goblin', 'acheter_goblin_hover', 'acheter_goblin_focus', on_click_buy_goblin),
 
     'current_tab': 0,
     'current_enchantment': None,
@@ -195,7 +202,13 @@ def on_draw():
         not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_slime'], x=170, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
         not_edible.append(pyglet.text.Label(str(len(entities)), font_name='04b_03b', font_size=12, x=215, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
-        ui_state['buy_button'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=290, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(len(entities)), font_name='04b_03b', font_size=12, x=335, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
+
+        ui_state['buy_button_slime'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
+
+        ui_state['buy_button_goblin'].draw(main_batch, ui_top_group, Position(190, window.get_size()[1] -  230))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
@@ -315,7 +328,8 @@ def on_mouse_release(x, y, button, modifiers):
 
     if button == pyglet.window.mouse.LEFT:
         if ui_state['tab_entities_focus']:
-            ui_state['buy_button'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy)
+            ui_state['buy_button_slime'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime)
+            ui_state['buy_button_goblin'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_goblin)
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
             generate_enchantments()
