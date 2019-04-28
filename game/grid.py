@@ -15,15 +15,21 @@ def distance_ecl(A, B):
 
 def lowest(end, Potential):
     tst = Potential[0]
-    mini = [tst, distance(tst.Position, end)]
+    mini = [tst, distance(tst, end)]
 
     for el in Potential:
-        dst = distance(el.Position, end)
+        dst = distance(el, end)
 
         if dst < mini[1]:
             mini = [el, dst]
 
     return mini[0]
+
+def acces(point, end):
+    l=[]
+    x = point.x
+    y = point.y
+    return [Position(x, y - 1), Position(x + 1, y), Position(x, y + 1), Position(x - 1, y)]
 
 def accessible_neighbour(point, end):
     l = []
@@ -187,7 +193,7 @@ class Grid:
                 entity.draw(batch, entities_group, Position((entity.position.x - start_x) * 70 * zoom, size[1] - (entity.position.y - start_y) * 70 * zoom) + offset + camera_offset, zoom)
 
     def find_path(self, start, end):
-        oport = accessible_neighbour(start, end)
+        oport = acces(start, end)
         return lowest(end, oport)
 
     def find_path2(self, start, end):
