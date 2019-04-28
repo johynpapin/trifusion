@@ -1,5 +1,4 @@
 import pyglet
-import math
 from math import ceil
 from math import sqrt
 from random import randint
@@ -15,10 +14,10 @@ def distance_ecl(A, B):
 
 def lowest(end, Potential):
     first = Potential[0]
-    mini = [first, distance(first, end)]
+    mini = [first, distance_ecl(first, end)]
 
     for el in Potential:
-        dst = distance(el, end)
+        dst = distance_ecl(el, end)
         if dst < mini[1]:
             mini = [el, dst]
 
@@ -85,6 +84,7 @@ class Grid:
         self.grid = {}
         self.camera = Position(-140, -140)
         self.zoom = 1.0
+
         self.sprites = []
 
         self.get_tile(Position(0, 0)).resource = House()
@@ -195,9 +195,10 @@ class Grid:
         L = []
         current = start
         while end != current:
-            oport = acces(start, end)
-            current=lowest(end, oport)
+            oport = acces(current, end)
+            current = lowest(end, oport)
             L.append(current)
+        return L
 
     def find_path2(self, start, end):
         if start == end:
