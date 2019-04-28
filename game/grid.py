@@ -14,12 +14,11 @@ def distance_ecl(A, B):
     return sqrt((A.x - B.x)**2 + (A.y + B.y)**2)
 
 def lowest(end, Potential):
-    tst = Potential[0]
-    mini = [tst, distance(tst, end)]
+    first = Potential[0]
+    mini = [first, distance(first, end)]
 
     for el in Potential:
         dst = distance(el, end)
-
         if dst < mini[1]:
             mini = [el, dst]
 
