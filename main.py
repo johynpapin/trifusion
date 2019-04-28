@@ -24,7 +24,7 @@ grid = Grid()
 for i in range(10):
     Pos = Position(-1,i)
     grid.is_road(Pos)
-    Pos = Position(i,-1)
+    Pos = Position(i,11)
     grid.is_road(Pos)
 
 e0 = SimpleEnchantment("IA stupide")

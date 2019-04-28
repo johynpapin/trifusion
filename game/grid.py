@@ -137,6 +137,17 @@ class Grid:
                 X+=1
                 y-=1
                 Pos = Position(x, y)
+            for i in range(i):
+                X-=1
+                y-=1
+                Pos = Position(x, y)
+                if isinstance(get_tile(Pos).resource, resource):
+                    return Pos
+
+            for i in range(i):
+                X+=1
+                y-=1
+                Pos = Position(x, y)
                 if isinstance(get_tile(Pos).resource, resource):
                     return Pos
 
@@ -254,14 +265,3 @@ class Forest:
         self.sprite = pyglet.sprite.Sprite(img=resources.images['forest' + str(self.forest_type)], batch=batch, group=group)
         self.sprite.x = position.x
         self.sprite.y = position.y
-        self.sprite.scale = ceil(scale)
-
-class Road:
-    def __init(self):
-        self.road_type = 0
-
-    def draw(self, batch, group, position, scale):
-        self.sprite = pyglet.sprite.Sprite(img=resources.images['road'], batch=batch, group=group)
-        self.sprite.x = position.x
-        self.sprite.y = position.y
-        self.sprite.scale = ceil(scale)
