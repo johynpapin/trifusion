@@ -36,14 +36,9 @@ class GameState:
 
 state = GameState()
 
-slime = SlimeEntity(grid, e0, state)
-entities.append(slime)
-
-goblin = GoblinEntity(grid, e0, state)
-entities.append(goblin)
-#
-# orc = OrcEntity(grid, e0, state)
-# entities.append(orc)
+for _ in range(5):
+    slime = SlimeEntity(grid, e0, state)
+    entities.append(slime)
 
 def on_click_buy_slime():
     if state.wood_count >= 20:
