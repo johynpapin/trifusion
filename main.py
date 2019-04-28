@@ -30,7 +30,7 @@ spells = [MoveSpell, HarvestSpell]
 
 listeners = {}
 
-slime = SlimeEntity(grid, e0)
+# slime = SlimeEntity(grid, e0)
 #entities.append(slime)
 
 ui_state = {
@@ -56,6 +56,7 @@ class GameState:
     def __init__(self):
         self.enchantment_boxes = []
         self.spell_boxes = []
+        self.wood_count = 0
 
 state = GameState()
 
@@ -145,8 +146,8 @@ def on_draw():
                 not_edible.append(pyglet.sprite.Sprite(resources.images['spell_' + type(spell).__name__[:-5].lower()], x=position.x + 30, y=position.y - 25, batch=main_batch, group=ui_top_group))
 
     if ui_state['current_tab'] == 0:
-        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_top_group))
-        not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=60, y=window.get_size()[1] - 140, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+        not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_bois'], x=50, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        not_edible.append(pyglet.text.Label(str(state.wood_count), font_name='04b_03b', font_size=12, x=95, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
     grid.draw(main_batch, background_group, resources_group, entities_group, grid_offset, window.get_size(), entities)
 
