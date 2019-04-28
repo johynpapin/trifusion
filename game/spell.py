@@ -11,7 +11,6 @@ class MoveSpell(Spell):
     def update(self, entity, state):
         if len(state) == 0:
             state['next_move'] = entity.speed
-            position = entity.position
 
         if state['next_move'] != 0:
             state['next_move'] -= 1
@@ -55,3 +54,4 @@ class WaitSpell(Spell):
             pass
 
         return (False,)
+
