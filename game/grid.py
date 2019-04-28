@@ -18,7 +18,7 @@ def lowest(end, Potential):
     mini = [first, distance(first, end)]
 
     for el in Potential:
-        dst = distance_eucl(el, end)
+        dst = distance_ecl(el, end)
         if dst < mini[1]:
             mini = [el, dst]
 
