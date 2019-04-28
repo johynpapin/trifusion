@@ -35,8 +35,8 @@ spells = [MoveSpell, HarvestSpell]
 
 listeners = {}
 
-slime = SlimeEntity(grid, e0)
-entities.append(slime)
+# slime = SlimeEntity(grid, e0)
+# entities.append(slime)
 
 ui_state = {
     'tab_entities_focus': False,
@@ -85,12 +85,6 @@ def on_draw():
     ui_header = pyglet.sprite.Sprite(resources.images['ui_header'], x=0, y=window.get_size()[1], batch=main_batch, group=ui_background_group)
     ui_footer = pyglet.sprite.Sprite(resources.images['ui_footer'], x=0, y=resources.images['ui_footer'].height, batch=main_batch, group=ui_background_group)
 
-    if ui_state['return_focus']:
-        ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_focus'], x=50, y=50, batch=main_batch, group=ui_group)
-    elif ui_state['return_hover']:
-        ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_hover'], x=50, y=50, batch=main_batch, group=ui_group)
-    else:
-        ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour'], x=50, y=50, batch=main_batch, group=ui_group)
 
     if ui_state['tab_entities_focus']:
         ui_tab_entities = pyglet.sprite.Sprite(resources.images['ui_tab_entities_focus'], x=32, y=ui_tabs_y, batch=main_batch, group=ui_group)
@@ -120,6 +114,8 @@ def on_draw():
     else:
         ui_tab_settings = pyglet.sprite.Sprite(resources.images['ui_tab_settings'], x=359, y=ui_tabs_y, batch=main_batch, group=ui_group)
 
+
+
     ui_background_height = window.get_size()[1] - resources.images['ui_header'].height - resources.images['ui_footer'].height + 38
 
     ui_background = []
@@ -136,6 +132,13 @@ def on_draw():
                 not_edible.append(pyglet.text.Label(enchantment.name, font_name='04b_03b', font_size=18, x=position.x + 70, y=position.y - 20, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
         else:
             enchantment = enchantments[ui_state['current_enchantment']]
+
+            if ui_state['return_focus']:
+                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_focus'], x=50, y=50, batch=main_batch, group=ui_group)
+            elif ui_state['return_hover']:
+                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour_hover'], x=50, y=50, batch=main_batch, group=ui_group)
+            else:
+                ui_return = pyglet.sprite.Sprite(resources.images['ui_bouton_retour'], x=50, y=75, batch=main_batch, group=ui_group)
 
             not_edible.append(pyglet.sprite.Sprite(resources.images['ui_enchantment_cost'], x=402, y=window.get_size()[1] - header_height + 22, batch=main_batch, group=ui_group))
             not_edible.append(pyglet.text.Label(str(enchantment.cost), font_name='04b_03b', font_size=20, x=418, y=window.get_size()[1] - header_height + 15, batch=main_batch, group=ui_top_group, anchor_y='top', anchor_x='left'))
