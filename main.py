@@ -3,7 +3,7 @@
 
 import pyglet
 from game.grid import Grid
-from game.entity import SlimeEntity, GoblinEntity
+from game.entity import SlimeEntity, GoblinEntity, OrcEntity
 from game.utils import Position
 from game.spell import MoveSpell, HarvestSpell, DropSpell
 from game.enchantment import SimpleEnchantment
@@ -36,11 +36,14 @@ class GameState:
 
 state = GameState()
 
-slime = SlimeEntity(grid, e0, state)
-entities.append(slime)
+# slime = SlimeEntity(grid, e0, state)
+# entities.append(slime)
+#
+# goblin = GoblinEntity(grid, e0, state)
+# entities.append(goblin)
 
-goblin = GoblinEntity(grid, e0, state)
-entities.append(goblin)
+orc = OrcEntity(grid, e0, state)
+entities.append(orc)
 
 def on_click_buy_slime():
     if state.wood_count >= 20:
@@ -51,6 +54,11 @@ def on_click_buy_goblin():
     if state.wood_count >= 50:
         state.wood_count -= 50
         entities.append(GoblinEntity(grid, e0, state))
+
+def on_click_buy_orc():
+    if state.wood_count >= 20:
+        state.wood_count -= 20
+        entities.append(OrcEntity(grid, e0, state))
 
 buttons = set()
 
@@ -134,6 +142,8 @@ ui_state = {
     'buy_button_slime': Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime),
 
     'buy_button_goblin': Button('acheter_goblin', 'acheter_goblin_hover', 'acheter_goblin_focus', on_click_buy_goblin),
+
+    'buy_button_orc': Button('acheter_orc', 'acheter_orc_hover', 'acheter_orc_focus', on_click_buy_orc),
 
     'current_tab': 0,
     'current_enchantment': None,
@@ -248,10 +258,15 @@ def on_draw():
         not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=290, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
         not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, GoblinEntity), entities)))), font_name='04b_03b', font_size=12, x=335, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
 
+        # not_edible.append(pyglet.sprite.Sprite(resources.images['boite_a_goblin'], x=290, y=window.get_size()[1] - 120, batch=main_batch, group=ui_group))
+        # not_edible.append(pyglet.text.Label(str(len(list(filter(lambda e: isinstance(e, GoblinEntity), entities)))), font_name='04b_03b', font_size=12, x=335, y=window.get_size()[1] - 180, batch=main_batch, group=ui_top_group, anchor_x='left', anchor_y='top'))
+
 
         ui_state['buy_button_slime'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  230))
 
         ui_state['buy_button_goblin'].draw(main_batch, ui_top_group, Position(190, window.get_size()[1] -  230))
+
+        ui_state['buy_button_orc'].draw(main_batch, ui_top_group, Position(35, window.get_size()[1] -  390))
 
     if ui_state['game_over']:
         not_edible.append(pyglet.text.Label('Game over', font_name='04b_03b', font_size=60, x=window.get_size()[0] // 2, y=window.get_size()[1] // 2, anchor_x='center', anchor_y='center', group=ui_on_window, batch=main_batch))
@@ -332,7 +347,7 @@ def generate_enchantments():
 
                 for j, spell in enumerate(enchantments[i].spells):
                     if isinstance(spell, MoveSpell):
-                        state.spell_boxes.append(MoveSpellButton(spell)) 
+                        state.spell_boxes.append(MoveSpellButton(spell))
                         state.spell_boxes[-1].set_resource_mode(not isinstance(spell.destination, Position))
                     else:
                         state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
@@ -364,13 +379,13 @@ def generate_enchantments():
                                 e = enchantments[ui_state['current_enchantment']]
                                 index = len(e.spells)
                                 e.spells.append(spell())
-                                
+
                                 if isinstance(spell, MoveSpell):
                                     state.spell_boxes.append(MoveSpellButton(spell))
                                     state.spell_boxes[-1].set_resource_mode(not isinstance(spell.destination, Position))
                                 else:
                                     state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(index), True))
-                                
+
                                 state.spell_boxes[-1].index = index
                                 state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(index, ui_state['current_enchantment'])
                                 ui_state['spells_order'].append(index)
@@ -405,7 +420,8 @@ def on_mouse_release(x, y, button, modifiers):
     if button == pyglet.window.mouse.LEFT:
         if ui_state['tab_entities_focus']:
             ui_state['buy_button_slime'] = Button('acheter_slime', 'acheter_slime_hover', 'acheter_slime_focus', on_click_buy_slime)
-            ui_state['buy_button_goblin'] = Button('acheter_goblin', 'acheter_slime_goblin', 'acheter_slime_goblin', on_click_buy_goblin)
+            ui_state['buy_button_goblin'] = Button('acheter_goblin', 'acheter_goblin_hover', 'acheter_goblin_focus', on_click_buy_goblin)
+            ui_state['buy_button_orc'] = Button('acheter_orc', 'acheter_orc_hover', 'acheter_slime_focus', on_click_buy_orc)
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
             generate_enchantments()

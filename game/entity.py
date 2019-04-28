@@ -80,3 +80,28 @@ class GoblinEntity(Entity):
         self.sprite.x = position.x
         self.sprite.y = position.y
         self.sprite.scale = scale
+
+class OrcEntity(Entity):
+    def __init__(self, grid, enchantment, state):
+        super().__init__(grid, enchantment, state, 15, 500 * 5)
+
+        self.frames = 0
+        self.animation_axe = 0
+
+    def draw(self, batch, group, position, scale):
+        self.frames += 1
+
+        if self.frames == 5:
+            self.animation_axe += 1
+            self.animation_axe %= 2
+            self.frames = 0
+
+        if isinstance(self.grid.get_tile(self.position).resource, Forest) and self.animation_axe == 0:
+            self.sprite = pyglet.sprite.Sprite(img=resources.images['orc_hache_haute'], batch=batch, group=group)
+        elif isinstance(self.grid.get_tile(self.position).resource, Forest) and self.animation_axe != 0:
+            self.sprite = pyglet.sprite.Sprite(img=resources.images['orc_hache_basse'], batch=batch, group=group)
+        else:
+            self.sprite = pyglet.sprite.Sprite(img=resources.images['orc_front'], batch=batch, group=group)
+        self.sprite.x = position.x
+        self.sprite.y = position.y
+        self.sprite.scale = scale
