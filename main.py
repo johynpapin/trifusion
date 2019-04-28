@@ -135,7 +135,6 @@ def on_draw():
             for j, i in enumerate(ui_state['spells_order']):
                 spell = enchantment.spells[i]
                 button = state.spell_boxes[i]
-                print('{} is at position {} and the button index is {}'.format(i, j, button.index))
                 position = Position(50, window.get_size()[1] - (header_height + j * (resources.images['ui_spell_box'].height + 5)))
                 button.draw(main_batch, ui_group, position)
                 not_edible.append(pyglet.text.Label(str(spell.cost), font_name='04b_03b', font_size=20, x=position.x + 275, y=position.y - 37, batch=main_batch, group=ui_top_group))
@@ -216,6 +215,56 @@ def on_mouse_press(x, y, button, modifiers):
         for button in buttons.copy():
             button.focus = is_position_in_rectangle(mouse_position, button.last_position.x, button.last_position.y, button.image.width, button.image.height)
 
+def generate_enchantments():
+    buttons.clear()
+    state.enchantment_boxes = []
+
+    for i, enchantment in enumerate(enchantments):
+        def generate_on_click(i):
+            def on_click():
+                buttons.clear()
+
+                def generate_on_click_but_for_spell(i):
+                    def on_click():
+                        pass
+
+                    return on_click
+
+                def generate_on_drag_still_for_spell(spell_index, enchantment_index):
+                    def on_drag(current_spell_box, x, y, dx, dy):
+                        for j, spell_box in enumerate(state.spell_boxes):
+                            mouse_position = Position(x, window.get_size()[1] - y)
+
+                            if spell_box.index != current_spell_box.index and \
+                                is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
+                                ui_state['spells_order'][current_spell_box.index], ui_state['spells_order'][spell_box.index] = ui_state['spells_order'][spell_box.index], ui_state['spells_order'][current_spell_box.index]
+                                spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
+                                return
+
+                    return on_drag
+
+                ui_state['spells_order'] = []
+
+                for j, spell in enumerate(enchantments[i].spells):
+                    state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
+                    state.spell_boxes[-1].index = j
+                    state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
+                    ui_state['spells_order'].append(j)
+                
+                def on_click_retour():
+                    ui_state['current_enchantment'] = None
+                    ui_state['return_button'] = None
+                    state.spell_boxes = []
+                    generate_enchantments()
+
+                ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
+                
+                ui_state['current_enchantment'] = i
+
+            return on_click
+
+        state.enchantment_boxes.append(Button('ui_enchantment_box', 'ui_enchantment_box_hover', 'ui_enchantment_box', generate_on_click(i)))
+
 @window.event
 def on_mouse_release(x, y, button, modifiers):
     mouse_position = Position(x, window.get_size()[1] - y)
@@ -224,53 +273,7 @@ def on_mouse_release(x, y, button, modifiers):
         if ui_state['tab_entities_focus']:
             ui_state['current_tab'] = 0
         elif ui_state['tab_enchantments_focus']:
-            for i, enchantment in enumerate(enchantments):
-                def generate_on_click(i):
-                    def on_click():
-                        buttons.clear()
-
-                        def generate_on_click_but_for_spell(i):
-                            def on_click():
-                                pass
-
-                            return on_click
-
-                        def generate_on_drag_still_for_spell(spell_index, enchantment_index):
-                            def on_drag(current_spell_box, x, y, dx, dy):
-                                for j, spell_box in enumerate(state.spell_boxes):
-                                    mouse_position = Position(x, window.get_size()[1] - y)
- 
-                                    if spell_box.index != current_spell_box.index and \
-                                        is_position_in_rectangle(mouse_position, spell_box.last_position.x, spell_box.last_position.y, spell_box.image.width, spell_box.image.height):
-
-                                        print('swaping {} with {}'.format(spell_box.index, current_spell_box.index))
-
-                                        ui_state['spells_order'][current_spell_box.index], ui_state['spells_order'][spell_box.index] = ui_state['spells_order'][spell_box.index], ui_state['spells_order'][current_spell_box.index]
-
-                                        spell_box.index, current_spell_box.index = current_spell_box.index, spell_box.index
-                                        print(len(enchantment.spells), len(state.spell_boxes))
-                                        return
-
-                            return on_drag
-
-                        ui_state['spells_order'] = []
-
-                        for j, spell in enumerate(enchantments[i].spells):
-                            state.spell_boxes.append(Button('ui_spell_box', 'ui_spell_box', 'ui_spell_box', generate_on_click_but_for_spell(j), True))
-                            state.spell_boxes[-1].index = j
-                            state.spell_boxes[-1].on_drag = generate_on_drag_still_for_spell(j, i)
-                            ui_state['spells_order'].append(j)
-                        
-                        def on_click_retour():
-                            ui_state['current_enchantment'] = None
-
-                        ui_state['return_button'] = Button('ui_bouton_retour', 'ui_bouton_retour_hover', 'ui_bouton_retour_focus', on_click_retour)
-                        
-                        ui_state['current_enchantment'] = i
-
-                    return on_click
-
-                state.enchantment_boxes.append(Button('ui_enchantment_box', 'ui_enchantment_box_hover', 'ui_enchantment_box', generate_on_click(i)))
+            generate_enchantments()
             ui_state['current_tab'] = 1
         elif ui_state['tab_spells_focus']:
             ui_state['current_tab'] = 2
