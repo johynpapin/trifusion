@@ -114,49 +114,67 @@ class Grid:
 
     def is_road(self, position):
         self.get_tile(position).resource = Road()
+
     def found_resource(self, position, resource):
-        i=1
-        while true:
-            X=i
-            Y=0
+        i = 1
+        while True:
+            x = i
+            y = 0
+            
             for i in range(i):
-                X-=1
-                y+=1
-                Pos = Position(x, y)
-                if isinstance(get_tile(Pos).resource, resource):
-                    return Pos
+                x -= 1
+                y += 1
+                
+                pos = Position(x, y)
+
+                if isinstance(self.get_tile(pos).resource, resource):
+                    return pos
 
             for i in range(i):
-                X-=1
-                y-=1
-                Pos = Position(x, y)
-                if isinstance(get_tile(Pos).resource, resource):
-                    return Pos
+                x -= 1
+                y -= 1
+                
+                pos = Position(x, y)
+
+                if isinstance(self.get_tile(pos).resource, resource):
+                    return pos
 
             for i in range(i):
-                X+=1
-                y-=1
-                Pos = Position(x, y)
-            for i in range(i):
-                X-=1
-                y-=1
-                Pos = Position(x, y)
-                if isinstance(get_tile(Pos).resource, resource):
-                    return Pos
+                x += 1
+                y -= 1
+
+                pos = Position(x, y)
+
+                if isinstance(self.get_tile(pos).resource, resource):
+                    return pos
 
             for i in range(i):
-                X+=1
-                y-=1
-                Pos = Position(x, y)
-                if isinstance(get_tile(Pos).resource, resource):
-                    return Pos
+                x -= 1
+                y -= 1
+                
+                pos = Position(x, y)
+                
+                if isinstance(self.get_tile(pos).resource, resource):
+                    return pos
 
             for i in range(i):
-                X+=1
-                y+=1
-                Pos = Position(x, y)
-                if isinstance(get_tile(Pos).resource, resource):
-                    return Pos
+                x += 1
+                y -= 1
+
+                pos = Position(x, y)
+                
+                if isinstance(self.get_tile(pos).resource, resource):
+                    return pos
+
+            for i in range(i):
+                x += 1
+                y += 1
+                
+                pos = Position(x, y)
+
+                if isinstance(self.get_tile(Pos).resource, resource):
+                    return pos
+            
             i += 1
 
     def move_camera(self, dx, dy):

@@ -1,5 +1,6 @@
 from .spell import MoveSpell, HarvestSpell
 from .utils import Position
+from .grid import Forest
 
 class Enchantment:
     def __init__(self, name):
@@ -20,7 +21,7 @@ class SimpleEnchantment(Enchantment):
     def __init__(self, name):
         super().__init__(name)
 
-        self.append_spell(MoveSpell(Position(10, 10)), HarvestSpell(), MoveSpell(Position(0, 0)))
+        self.append_spell(MoveSpell(Forest), HarvestSpell(), MoveSpell(Position(0, 0)))
 
 class Executor():
     def __init__(self, entity, enchantment):
