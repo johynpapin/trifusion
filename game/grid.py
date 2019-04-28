@@ -194,12 +194,21 @@ class Grid:
     def find_path(self, start, end):
         L = []
         current = start
-        while end.x != current.x and end.y != cuurent.y:
-            oport = acces(current, end)
-            current = lowest(end, oport)
-            L.append(current)
+        i = 0
+        while current.x != end.x and current.y != end.y:
+            if current.x < end.x:
+                current.x += 1
+                L.append(current)
+            if current.x > end.x:
+                current.x -= 1
+                L.append(current)
+            if current.y < end.y:
+                current.y += 1
+                L.append(current)
+            if current.y > end.y:
+                current.y -= 1
+                L.append(current)
         return L
-
     def find_path2(self, start, end):
         if start == end:
             return []
