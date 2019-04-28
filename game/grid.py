@@ -246,7 +246,7 @@ class Tile:
     def __init__(self, position):
         self.resource = None
         self.position = position
-        self.grass_type = randint(0, 1)
+        self.grass_type = randint(0, 6)
 
     def is_obstacle(self):
         return False
