@@ -198,6 +198,7 @@ class Grid:
             oport = acces(current, end)
             current = lowest(end, oport)
             L.append(current)
+        return L
 
     def find_path2(self, start, end):
         if start == end:
